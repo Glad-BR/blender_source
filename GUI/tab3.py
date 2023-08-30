@@ -44,40 +44,46 @@ def phong_box(layout, scene):
 
 def list_mats_box(layout, scene):
     
-    box2 = layout.box().column(align=True)
+    coll1 = layout.column(align=True)
+    
+    box2 = coll1.box().column(align=True)
     rowrow = box2.row(align=True)
-    rowrow.label(text="Active Materials:")
+    #rowrow.label(text="Active Materials:")
+    rowrow.prop(scene, "enable_display_mats", text="Active Materials:")
     rowrow.label(text="Found Textures:")
     
-    row1 = box2.row(align=True)
-    boxy2 = row1.box().column(align=True)
     
-    for material in util.get_materials():
+    #boxy2 = box2.column(align=True)
+    
+    if scene.enable_display_mats:
         
-        nodes, status = util.decode_material_nodes(scene, material)
+        boxy2 = coll1.box().column(align=True)
         
-        row = boxy2.row(align=True)
-        
-        color, pbr, normal, light = nodes
-        has_color, has_pbr, has_normal, has_light = status
-        
-        row.label(text=material.name)
-        
-        if has_color or has_pbr or has_normal or has_light:
-            
-            to_print = []
-            
-            if has_color:
-                to_print.append("Color")
-            if has_pbr:
-                to_print.append("PBR")
-            if has_normal:
-                to_print.append("Normal")
-            if has_light:
-                to_print.append("Emissive")
+        for material in util.get_materials():
 
-            row69 = row.column().row(align=True)
-            row69.label(text=str(to_print) )
+            nodes, status = util.decode_material_nodes(scene, material)
+
+            row = boxy2.row(align=True)
+
+            color, pbr, normal, light = nodes
+            has_color, has_pbr, has_normal, has_light = status
+
+            row.label(text=material.name)
+
+            if has_color or has_pbr or has_normal or has_light:
+
+                to_print = []
+
+                if has_color:
+                    to_print.append("Color")
+                if has_pbr:
+                    to_print.append("PBR")
+                if has_normal:
+                    to_print.append("Normal")
+                if has_light:
+                    to_print.append("Emissive")
+                row69 = row.column().row(align=True)
+                row69.label(text=str(to_print) )
 
 #///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

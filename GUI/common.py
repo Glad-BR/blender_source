@@ -124,6 +124,8 @@ classes = [
 def register():
     for cls in classes:
         bpy.utils.register_class(cls)
+        
+    bpy.types.Scene.enable_display_mats = bpy.props.BoolProperty(default=True)
     
     bpy.types.Scene.export_work_folder = bpy.props.StringProperty(subtype="DIR_PATH", default="//export", description="Export Folder")
     
@@ -141,12 +143,15 @@ def register():
     bpy.types.Scene.make_vmt = bpy.props.BoolProperty(default=True)
     
     bpy.types.Scene.auto_deploy = bpy.props.BoolProperty(default=False)
+    
 
 #///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 def unregister():
     for cls in classes:
         bpy.utils.unregister_class(cls)
+    
+    del bpy.types.Scene.enable_display_mats
     
     del bpy.types.Scene.export_work_folder
     del bpy.types.Scene.gameinfo_path

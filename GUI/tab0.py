@@ -25,10 +25,8 @@ def build(self, context):
     box.prop(scene, "ref_collection", text="Reference Collection")
     box.prop(scene, "pys_collection", text="Collision Collection")
     
-    box = layout.box()
-    draw_formats(box, scene)
-    draw_export_box(box, scene)
     
+    draw_formats(layout.box(), scene)
     
     
     draw_source_input(layout, scene)
@@ -51,8 +49,9 @@ def general_box(layout, scene):
     coll2.prop(scene, "surfaceprop", text="surfaceprop")
     
     coll3 = box.column(align=True)
-    coll3.label(text= "Full Material Path: [ "+str(ph.material())+" ]" )
-    coll3.label(text= "Full Model Path:    [ "+str(ph.model())+" ]" )
+    coll3.prop(scene, "use_name_in_material", text= "Use Name in Path | Full Material Path: [ "+str(ph.material())+" ]" )
+    coll3.prop(scene, "use_name_in_model", text= "Use Name in Path | Full Model Path:    [ "+str(ph.model())+" ]" )
+    
 
 #///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -77,16 +76,21 @@ def draw_path_in(layout, scene):
     
     box.box().label(text= "Full Material Path: [ "+str(common.models_local_path(scene))+" ]" )
 
+
 def draw_formats(layout, scene):
     
-    #box = layout.box()
-    box = layout
-    
-    row = box.row(align=True)
+    row = layout.row(align=True)
     row.label(text="Export Format:")
     row.operator("object.dev_use_smd", text="SMD", depress=scene.gbr_export_format == 'SMD')
     row.operator("object.dev_use_dmx", text="DMX", depress=scene.gbr_export_format == 'DMX')
-
+    
+    row2 = layout.row(align=True)
+    row2.prop(scene, "make_lods", text="Make LOD     Export:")
+    row2.operator("object.export_auto", text="Export Mesh")
+    row2.operator("object.make_qc", text="Write QC")
+    row2.operator("object.compile_qc", text="Compile")
+    row2.operator("wm.open_file_browser", text="", icon='FILE')
+    
 
 
 def draw_prop_config(layout, scene):
@@ -105,18 +109,6 @@ def draw_prop_config(layout, scene):
     row1.prop(scene, "inertia", text="inertia")
     
 
-def draw_export_box(layout, scene):
-    
-    #box = layout.box()
-    box = layout
-    #box.prop(scene, "make_lods", text="Make LOD   Export:")
-    
-    row = box.row(align=True)
-    #row.label(text="Export:")
-    row.prop(scene, "make_lods", text="Make LOD     Export:")
-    row.operator("object.export_auto", text="Export Mesh")
-    row.operator("object.make_qc", text="Write QC")
-    row.operator("object.compile_qc", text="Compile")
 
 def draw_source_input(layout, scene):
     
@@ -200,6 +192,18 @@ class make_qc(bpy.types.Operator):
         qc.write_idle()
         return {'FINISHED'}
 
+#///////////////////////////////////////////////////////////////////////////////
+
+class OpenFileBrowserOperator(bpy.types.Operator):
+    bl_idname = "wm.open_file_browser"
+    bl_label = "Open File Browser"
+    
+    def execute(self, context):
+        # Open the file browser to the specific path
+        path = os.path.join(ph.work_folder(),ph.path_compile_model())
+        os.makedirs(path, exist_ok=True)
+        bpy.ops.wm.path_open(filepath=path)
+        return {'FINISHED'}
 
 #///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -210,7 +214,8 @@ classes = [
     export_ref,
     export_pys,
     compile_qc,
-    make_qc
+    make_qc,
+    OpenFileBrowserOperator
 ]
 
 
@@ -229,6 +234,9 @@ def register():
     bpy.types.Scene.make_smooth = bpy.props.BoolProperty(default=True)
     bpy.types.Scene.pys_smooth = bpy.props.BoolProperty(default=True)
     
+    
+    bpy.types.Scene.use_name_in_model = bpy.props.BoolProperty(default=True)
+    bpy.types.Scene.use_name_in_material = bpy.props.BoolProperty(default=False)
     
     
     bpy.types.Scene.staticprop = bpy.props.BoolProperty(default=True)

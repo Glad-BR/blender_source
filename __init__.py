@@ -12,9 +12,9 @@ bl_info = {
 }
 
 lod_num = [
-    [15, 15],
-    [30, 30],
-    [40, 40]
+    [40, 15],
+    [80, 30],
+    [160, 40],
 ]
 
 root_folder = os.path.dirname(os.path.abspath(__file__))
@@ -37,18 +37,16 @@ def register():
     
     check_pill()
     
-    from . import GUI, icons, main, misc
+    from . import GUI, main, misc
     GUI.register()
-    icons.register()
     main.register()
     misc.register()
 
 
 def unregister():
     
-    from . import GUI, icons, main, misc
+    from . import GUI, main, misc
     GUI.unregister()
-    icons.unregister()
     main.unregister()
     misc.unregister()
 

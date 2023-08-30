@@ -3,16 +3,17 @@ import threading
 
 import bpy
 
+from . import root_folder
 from .GUI import tab0, tab1, tab2, tab3
 from .misc import util
 
 
 class SimplePanel(bpy.types.Panel):
-    bl_label = "Source VTF"
+    bl_label = "GBR Blender Source Tool"
     bl_idname = "OBJECT_PT_simple_panel"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
-    bl_category = "VTF"
+    bl_category = "GBR Source"
 
     def draw(self, context):
         layout = self.layout
@@ -20,7 +21,7 @@ class SimplePanel(bpy.types.Panel):
         
         tab = scene.pannel_current_tab
 
-        layout.label(text="Root @ "+str(os.path.dirname(os.path.abspath(__file__))))
+        layout.label(text=f"Root @ {str(root_folder)}")
         
         tabs = layout.box().row(align=True)
         

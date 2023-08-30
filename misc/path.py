@@ -9,11 +9,17 @@ def work_folder():
 
 def material():
     scene = bpy.context.scene
-    return os.path.normpath( os.path.join( scene.material_path, scene.model_name ) )
+    if scene.use_name_in_material:
+        return os.path.normpath( os.path.join( scene.material_path, scene.model_name ) )
+    else:
+        return os.path.normpath( os.path.join( scene.material_path ) )
 
 def model():
     scene = bpy.context.scene
-    return os.path.normpath( os.path.join( scene.model_path, scene.model_name ) )
+    if scene.use_name_in_model:
+        return os.path.normpath( os.path.join( scene.model_path, scene.model_name ) )
+    else:
+        return os.path.normpath( os.path.join( scene.model_path ) )
 
 def source():
     scene = bpy.context.scene

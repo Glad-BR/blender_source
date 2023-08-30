@@ -44,6 +44,8 @@ def make_lod(collection, lod_levels):
     for [lod_level, angle] in lod_levels:
         objects = decode_coll(collection)
         
+        make_smooth_coll(collection)
+        
         for obj in objects:
             print( obj.name+" With Lod: "+str(angle)+"Using Angle: "+str(angle) )
             
@@ -52,7 +54,6 @@ def make_lod(collection, lod_levels):
         new_name = "LOD_"+str(lod_level)
         
         collection.name = new_name
-        
         bpy.ops.export_scene.smd(collection=new_name, export_scene=False)
     
     for obj in decode_coll(collection):

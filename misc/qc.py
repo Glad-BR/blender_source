@@ -5,6 +5,7 @@ import bpy
 from .. import lod_num
 from ..GUI import common
 from . import path as ph
+from . import util
 
 
 def build():
@@ -57,6 +58,8 @@ def write_qc():
         f.write(f'$contents "{scene.contents}"\n')
         f.write('\n')
         f.write(f'$cdmaterials "{ph.material()}"\n')
+        #for mat in util.get_materials():
+        #    f.write(f'$cdmaterials "{os.path.join(ph.material(), mat.name)}"\n')
         f.write('\n')
         
         f.write(f'$collisionmodel "PYS.{export_format}"\n')
