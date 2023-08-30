@@ -1,3 +1,4 @@
+import concurrent.futures
 import os
 
 import bpy
@@ -92,7 +93,7 @@ def pbr_magic(input_images, scene):
     
     return [specular, image_normal, phong], image_color
 
-
+#///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 def main(scene, nodes, status, material):
     has_color, has_pbr, has_normal, has_light = status

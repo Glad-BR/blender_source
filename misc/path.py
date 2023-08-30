@@ -42,7 +42,5 @@ def path_compile_model():
     return os.path.join( "modelsrc", model() )
 
 
-
-
 def full_material():
     return os.path.join( work_folder(), path_material() )

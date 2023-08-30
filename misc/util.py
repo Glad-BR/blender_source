@@ -7,16 +7,16 @@ import bpy
 
 from .. import lod_num
 from . import path as ph
-from . import pbr, qc, smd, util, vmt, vtf
+from . import pbr, qc, smd, vmt, vtf
 
 #///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-def deploy_mat():
-    
-    source_folder = os.path.join(ph.work_folder(), "materials")
-    destination_folder = os.path.join(ph.source(), "materials")
-    
-    shutil.copytree(source_folder, destination_folder)
+#def deploy_mat():
+#    
+#    source_folder = os.path.join(ph.work_folder(), "materials")
+#    destination_folder = os.path.join(ph.source(), "materials")
+#    
+#    shutil.copytree(source_folder, destination_folder)
 
 
 def export_mesh():
@@ -30,11 +30,11 @@ def export_mesh():
     qc.write_qc()
     qc.write_idle()
     
-    util.run_exe()
+    run_studiomdl()
 
 #///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-def export(scene):
+def export_mat(scene):
     
     threads = []
     
@@ -57,14 +57,14 @@ def export(scene):
         for thread in threads:
             thread.join()
     
-    if scene.auto_deploy:
-        deploy_mat()
+    #if scene.auto_deploy:
+    #    deploy_mat()
     
     print("Export Done")
 
 #///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-def run_exe():
+def run_studiomdl():
     
     cmd = f'"{ph.studiomdl()}" -game "{ph.source()}" -nop4 -verbose "compile.qc"'
     
@@ -86,7 +86,11 @@ def process_material(scene, material, work_folder):
         if scene.convert_vtf:
             vtf.main(scene, work_folder)
     if scene.make_vmt or scene.only_vmt:
-        vmt.main(scene, status, material.name)
+        vmt.main(scene, status, material.name, material.name)
+        
+        if status[3] and scene.make_skin_groups:
+            status[3] = False
+            vmt.main(scene, status, material.name, (material.name+'_OFF'))
 
 def get_materials():
     active_materials = []
@@ -98,7 +102,13 @@ def get_materials():
                 
     return active_materials
 
+#///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+def mat_has_light(material):
+    [temp , status] = decode_material_nodes(bpy.context.scene, material)
+    return status[3]
+
+#///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 def decode_material_nodes(scene, material):
     label_to_node_type = {
@@ -165,4 +175,3 @@ def decode_nodes_fallback(scene, material):
     )
     
     return nodes_return_backup, status_backup
-

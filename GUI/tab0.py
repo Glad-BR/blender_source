@@ -89,7 +89,7 @@ def draw_formats(layout, scene):
     row2.operator("object.export_auto", text="Export Mesh")
     row2.operator("object.make_qc", text="Write QC")
     row2.operator("object.compile_qc", text="Compile")
-    row2.operator("wm.open_file_browser", text="", icon='FILE')
+    row2.operator("wm.open_file_modelscr", text="", icon='FILE')
     
 
 
@@ -115,17 +115,12 @@ def draw_source_input(layout, scene):
     box = layout.box().column()
     
     box.prop(scene, "source_root", text="[gameinfo.txt] Path")
-    box.label(text=ph.source())
     
-    if os.path.exists(ph.studiomdl()):
-        box.label( text="studiomdl: OK" )
-    else:
-        box.label( text="studiomdl: Not Found" )
-    
-    if os.path.exists(ph.hlmv()):
-        box.label( text="hlmv: OK" )
-    else:
-        box.label( text="hlmv: Not Found" )
+    box.label(text=f"studiomdl: {is_ok(ph.studiomdl())} | hlmv: {is_ok(ph.hlmv())}") # @ [ {ph.source()} ]
+
+def is_ok(path):
+    if os.path.exists(path): return "OK"
+    else: return "Not Found"
 
 #///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -158,30 +153,13 @@ class export_auto(bpy.types.Operator):
         smd.func_export_pys(scene.pys_collection)
         return {'FINISHED'}
 
-class export_ref(bpy.types.Operator):
-    bl_idname = "object.export_ref"
-    bl_label = "Export"
-    def execute(self, context):
-        scene = bpy.context.scene
-        global lod_num
-        smd.func_export_ref(lod_num, scene.ref_collection)
-        return {'FINISHED'}
-
-class export_pys(bpy.types.Operator):
-    bl_idname = "object.export_pys"
-    bl_label = "Export Pys"
-    def execute(self, context):
-        scene = bpy.context.scene
-        smd.func_export_pys(scene.pys_collection)
-        return {'FINISHED'}
-
 
 class compile_qc(bpy.types.Operator):
     bl_idname = "object.compile_qc"
     bl_label = "Export Pys"
     def execute(self, context):
         scene = bpy.context.scene
-        util.run_exe()
+        util.run_studiomdl()
         return {'FINISHED'}
 
 class make_qc(bpy.types.Operator):
@@ -194,8 +172,8 @@ class make_qc(bpy.types.Operator):
 
 #///////////////////////////////////////////////////////////////////////////////
 
-class OpenFileBrowserOperator(bpy.types.Operator):
-    bl_idname = "wm.open_file_browser"
+class open_file_modelscr(bpy.types.Operator):
+    bl_idname = "wm.open_file_modelscr"
     bl_label = "Open File Browser"
     
     def execute(self, context):
@@ -211,11 +189,9 @@ classes = [
     dev_use_smd,
     dev_use_dmx,
     export_auto,
-    export_ref,
-    export_pys,
     compile_qc,
     make_qc,
-    OpenFileBrowserOperator
+    open_file_modelscr
 ]
 
 

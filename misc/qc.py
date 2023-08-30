@@ -44,22 +44,16 @@ def write_qc():
         f.write('}\n')
         f.write('\n')
         
-        if scene.make_lods:
-            for [lod, ang] in lod_num:
-                f.write(f'$lod {lod}\n')
-                f.write('{\n')
-                f.write(f'\treplacemodel "{reference}.{export_format}" "LOD_{lod}.{export_format}"\n')
-                f.write(f'\tnofacial\n')
-                f.write('}\n')
-                f.write('\n')
+        write_lod(f, scene, reference, export_format)
         
         f.write(f'$surfaceprop "{scene.surfaceprop}"\n')
         f.write('\n')
         f.write(f'$contents "{scene.contents}"\n')
         f.write('\n')
         f.write(f'$cdmaterials "{ph.material()}"\n')
-        #for mat in util.get_materials():
-        #    f.write(f'$cdmaterials "{os.path.join(ph.material(), mat.name)}"\n')
+        
+        if scene.make_lods: write_texturegroup(f)
+        
         f.write('\n')
         
         f.write(f'$collisionmodel "PYS.{export_format}"\n')
@@ -76,6 +70,48 @@ def write_qc():
         
         f.write(f'$sequence "idle" "{os.path.join("anims","idle.SMD")}"\n')
         f.write('\n')
+
+def write_lod(f, scene, reference, export_format):
+    if scene.make_lods:
+        for [lod, ang] in lod_num:
+            f.write(f'$lod {lod}\n')
+            f.write('{\n')
+            f.write(f'\treplacemodel "{reference}.{export_format}" "LOD_{lod}.{export_format}"\n')
+            f.write(f'\tnofacial\n')
+            f.write('}\n')
+            f.write('\n')
+
+
+def write_texturegroup(f):
+    
+    suffix = '_OFF'
+    
+    mats = util.get_materials()
+    
+    skin0 = ''
+    skin1 = ''
+    
+    for mat in mats:
+        if util.mat_has_light(mat):
+            skin0 = skin0 + f'"{mat.name} "'
+            skin1 = skin1 + f'"{mat.name+suffix} "'
+    
+    skin0 = '{ '+skin0+'}'
+    skin1 = '{ '+skin1+'}'
+    
+    f.write(f'$texturegroup "skinfamilies"\n')
+    f.write('{\n')
+    f.write(f'\t{skin0}\n')
+    f.write(f'\t{skin1}\n')
+    f.write('}\n')
+    f.write('\n')
+    
+    print("")
+    print(skin0)
+    print(skin1)
+    print("")
+
+
 
 def write_idle():
     scene = bpy.context.scene

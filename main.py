@@ -32,12 +32,12 @@ class SimplePanel(bpy.types.Panel):
         
         tabz = tabs.row(align=True)
         tabz.scale_y = 1.4
-        tabz.scale_x = 1.4
+        tabz.scale_x = 0.5
         
-        tabz.operator("object.button0", text="", icon='BLENDER', depress=(tab == 0) )
-        tabz.operator("object.button1", text="", icon='BLENDER', depress=(tab == 1) )
-        tabz.operator("object.button2", text="", icon='BLENDER', depress=(tab == 2) )
-        tabz.operator("object.button3", text="", icon='BLENDER', depress=(tab == 3) )
+        tabz.operator("object.button0", text="MDL", depress=(tab == 0) )
+        tabz.operator("object.button1", text="VTF", depress=(tab == 1) )
+        tabz.operator("object.button2", text="VMT", depress=(tab == 2) )
+        tabz.operator("object.button3", text="glTF", depress=(tab == 3) )
         
         layout.separator()
         
@@ -96,6 +96,7 @@ def register():
     
     bpy.types.Scene.multithreading = bpy.props.BoolProperty(default=False)
     bpy.types.Scene.vtf_multithreading = bpy.props.BoolProperty(default=True)
+    bpy.types.Scene.pil_multithreading = bpy.props.BoolProperty(default=False)
     
     bpy.types.Scene.pannel_current_tab = bpy.props.IntProperty(default=0, min=0, max=3)
 
@@ -108,3 +109,4 @@ def unregister():
     
     del bpy.types.Scene.multithreading
     del bpy.types.Scene.vtf_multithreading
+    del bpy.types.Scene.pil_multithreading

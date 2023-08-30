@@ -20,7 +20,7 @@ def shrink_float_length(float_number, num_digits):
 
 
 
-def main(scene, status, mat_name):
+def main(scene, status, mat_name, vmt_name):
     
     Has_color, Has_pbr, Has_normal, Has_Light = status
     
@@ -38,7 +38,7 @@ def main(scene, status, mat_name):
     basealphaenvmapmask = to_bin(scene.basealphaenvmapmask)
     envmapfresnel = to_bin(scene.envmapfresnel)
     
-    with open( os.path.join( ph.full_material() , mat_name+".vmt" ) , 'w') as f:
+    with open( os.path.join( ph.full_material() , vmt_name+".vmt" ) , 'w') as f:
         f.write('"VertexLitGeneric"\n')
         f.write('{\n')
         f.write(f'\t"$basetexture"          "{base_texture}/Specular"   \n')
