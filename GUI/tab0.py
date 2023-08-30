@@ -16,19 +16,20 @@ def build(self, context):
     
     general_box(layout, scene)
     
-    row1 = layout.row()
+    row1 = layout.box().row(align=True)
     tab3.list_mats_box(row1, scene)
-    lod_list_box(row1, scene)
+    #lod_list_box(row1, scene)
+    draw_prop_config(row1, scene)
     
     box = layout.box()
     box.prop(scene, "ref_collection", text="Reference Collection")
     box.prop(scene, "pys_collection", text="Collision Collection")
     
-    draw_formats(layout.row(), scene)
+    box = layout.box()
+    draw_formats(box, scene)
+    draw_export_box(box, scene)
     
-    draw_prop_config(layout, scene)
     
-    draw_export_box(layout, scene)
     
     draw_source_input(layout, scene)
     
@@ -78,7 +79,8 @@ def draw_path_in(layout, scene):
 
 def draw_formats(layout, scene):
     
-    box = layout.box()
+    #box = layout.box()
+    box = layout
     
     row = box.row(align=True)
     row.label(text="Export Format:")
@@ -91,22 +93,27 @@ def draw_prop_config(layout, scene):
     
     box2 = layout.box().column()
     
-    row1 = box2.row(align=True)
+    #row1 = box2.row(align=True)
+    row1 = box2
     
     row1.prop(scene, "staticprop", text="staticprop")
     row1.prop(scene, "concave", text="concave")
+    
+    row1.prop(scene, "contents", text="contents")
+    
     row1.prop(scene, "mass", text="mass")
     row1.prop(scene, "inertia", text="inertia")
     
-    box2.prop(scene, "contents", text="contents")
 
 def draw_export_box(layout, scene):
     
-    box = layout.box()
-    box.prop(scene, "make_lods", text="Make LOD")
+    #box = layout.box()
+    box = layout
+    #box.prop(scene, "make_lods", text="Make LOD   Export:")
     
     row = box.row(align=True)
-    row.label(text="Export:")
+    #row.label(text="Export:")
+    row.prop(scene, "make_lods", text="Make LOD     Export:")
     row.operator("object.export_auto", text="Export Mesh")
     row.operator("object.make_qc", text="Write QC")
     row.operator("object.compile_qc", text="Compile")

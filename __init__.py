@@ -37,18 +37,20 @@ def register():
     
     check_pill()
     
-    from . import GUI, main, misc
+    from . import GUI, icons, main, misc
+    GUI.register()
+    icons.register()
     main.register()
     misc.register()
-    GUI.register()
 
 
 def unregister():
     
-    from . import GUI, main, misc
+    from . import GUI, icons, main, misc
+    GUI.unregister()
+    icons.unregister()
     main.unregister()
     misc.unregister()
-    GUI.unregister()
 
 
 if __name__ == "__main__":

@@ -44,12 +44,12 @@ def phong_box(layout, scene):
 
 def list_mats_box(layout, scene):
     
-    box2 = layout.box().column()
-    rowrow = box2.row()
+    box2 = layout.box().column(align=True)
+    rowrow = box2.row(align=True)
     rowrow.label(text="Active Materials:")
     rowrow.label(text="Found Textures:")
     
-    row1 = box2.row()
+    row1 = box2.row(align=True)
     boxy2 = row1.box().column(align=True)
     
     for material in util.get_materials():

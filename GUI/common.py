@@ -5,8 +5,8 @@ import threading
 
 import bpy
 
-from .. import lod_num, misc
 from ..misc import path as ph
+from ..misc import util
 
 #///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -52,6 +52,12 @@ def str_to_list(input_string):
 def list_to_string(input_list):
     return ";".join(input_list)
 
+def studio_ok():
+    return os.path.exists(ph.studiomdl())
+
+def hlmv_ok():
+    return os.path.exists(ph.hlmv())
+
 #///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 class Export_Texture(bpy.types.Operator):
@@ -60,7 +66,7 @@ class Export_Texture(bpy.types.Operator):
     def execute(self, context):
         scene = context.scene
         print("Beginning Exporting")
-        misc.util.export(scene)
+        util.export(scene)
         self.report({'INFO'}, "Exporting Textures")
         return {'FINISHED'}
 
@@ -68,22 +74,22 @@ class Export_Mesh(bpy.types.Operator):
     bl_idname = "object.mesh_export"
     bl_label = "Export Pys"
     def execute(self, context):
-        misc.util.export_mesh()
-        self.report({'INFO'}, "Exporting Model")
+        if studio_ok():
+            self.report({'INFO'}, "Exporting Model")
+            util.export_mesh()
+        else: self.report({'INFO'}, "gameinfo.txt not found")
         return {'FINISHED'}
 
 class Export_All(bpy.types.Operator):
     bl_idname = "object.export_all"
     bl_label = "Export All"
     def execute(self, context):
-        
-        self.report({'INFO'}, "Exporting Model & Textures")
-        
-        misc.util.export(context.scene,)
-        
-        misc.util.export_mesh()
-        
-        self.report({'INFO'}, "Export Complete")
+        if studio_ok():
+            self.report({'INFO'}, "Exporting Model & Textures")
+            util.export(context.scene,)
+            util.export_mesh()
+            self.report({'INFO'}, "Export Complete")
+        else: self.report({'INFO'}, "gameinfo.txt not found")
         return {'FINISHED'}
 
 
@@ -91,9 +97,12 @@ class open_hlmv(bpy.types.Operator):
     bl_idname = "object.open_hlmv"
     bl_label = "Open hlmv.exe"
     def execute(self, context):
-        thread = threading.Thread(target=runglmv)
-        thread.start()
-        self.report({'INFO'}, "hlmv started")
+        if hlmv_ok():
+            thread = threading.Thread(target=runglmv)
+            thread.start()
+            self.report({'INFO'}, "hlmv started")
+        else:
+            self.report({'INFO'}, "hlmv Not Found")
         return {'FINISHED'}
 
 def runglmv():
