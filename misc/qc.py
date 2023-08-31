@@ -33,9 +33,9 @@ def write_qc():
         #Body
         if scene.staticprop:
             f.write('$staticprop\n')
+            f.write('\n')
         
-        f.write('\n')
-        f.write(f'$modelname "{ph.model()}.mdl"\n')
+        f.write(f'$modelname "{os.path.join(ph.model(), str(scene.model_name)+".mdl")}"\n')
         
         f.write('\n')
         f.write('$bodygroup "Body"\n')
@@ -51,6 +51,7 @@ def write_qc():
         f.write(f'$contents "{scene.contents}"\n')
         f.write('\n')
         f.write(f'$cdmaterials "{ph.material()}"\n')
+        f.write('\n')
         
         if scene.make_lods: write_texturegroup(f)
         
@@ -93,8 +94,8 @@ def write_texturegroup(f):
     
     for mat in mats:
         if util.mat_has_light(mat):
-            skin0 = skin0 + f'"{mat.name} "'
-            skin1 = skin1 + f'"{mat.name+suffix} "'
+            skin0 = skin0 + f'"{mat.name}" '
+            skin1 = skin1 + f'"{mat.name+suffix}" '
     
     skin0 = '{ '+skin0+'}'
     skin1 = '{ '+skin1+'}'
@@ -104,7 +105,6 @@ def write_texturegroup(f):
     f.write(f'\t{skin0}\n')
     f.write(f'\t{skin1}\n')
     f.write('}\n')
-    f.write('\n')
     
     print("")
     print(skin0)

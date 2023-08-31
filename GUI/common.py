@@ -29,7 +29,7 @@ def export_box(self, context):
     
     
     funny3 = row1.row(align=True)
-    funny3.scale_x = 0.6
+    funny3.scale_x = 0.65
     funny3.operator("wm.open_file_tex", text="VTF", icon='FILE')
     funny3.operator("wm.open_file_mdl", text="MDL", icon='FILE')
     funny3.operator("wm.open_file_qc", text="QC", icon='FILE')
@@ -163,7 +163,7 @@ classes = [
 def register():
     for cls in classes:
         bpy.utils.register_class(cls)
-        
+    
     bpy.types.Scene.enable_display_mats = bpy.props.BoolProperty(default=True)
     
     bpy.types.Scene.export_work_folder = bpy.props.StringProperty(subtype="DIR_PATH", default="//export", description="Export Folder")

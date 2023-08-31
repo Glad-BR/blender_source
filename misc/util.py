@@ -70,9 +70,6 @@ def run_studiomdl():
     
     working_directory = os.path.join(ph.work_folder(), ph.path_compile_model())
     
-    print(cmd)
-    print(working_directory)
-    
     subprocess.run(cmd, shell=True, cwd=working_directory)
 
 #///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -126,12 +123,12 @@ def decode_material_nodes(scene, material):
     status = [label in nodes for label in label_to_node_type.values()]
     nodes_return = nodes.get('Color'), nodes.get('PBR'), nodes.get('Normal'), nodes.get('Light')
     
-    if nodes.get('Color') or nodes.get('Normal'):
+    if nodes.get('Color'):
         return nodes_return, status
     else:
-        return decode_nodes_fallback(scene, material)
+        return decode_nodes_fallback(material)
 
-def decode_nodes_fallback(scene, material):
+def decode_nodes_fallback(material):
     
     status_backup = [False, False, False, False]
     #has_color, has_pbr, has_normal, has_light

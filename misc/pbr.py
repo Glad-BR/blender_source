@@ -16,10 +16,18 @@ def convert_to_pil(input_data):
     width, height = map(int, blender_image.size)
     num_channels = len(blender_image.pixels) // (width * height)
     mode = 'RGBA' if num_channels == 4 else 'RGB'
-    
     pixel_data = [int(p * 255) for p in blender_image.pixels]
     pillow_image = Image.frombytes(mode, (width, height), bytes(pixel_data))
     return pillow_image
+
+
+
+def load_img(node):
+    path = os.path.abspath(bpy.path.abspath(node.image.filepath))
+    print(f"Loading IMG: {os.path.basename(path)}")
+    return Image.open(path)
+
+
 
 def decode_pbr(pbr, scene):
     channel_images = {}
@@ -43,12 +51,10 @@ def decode_pbr(pbr, scene):
 def exponent(image, exponent):
     return Image.eval(image, lambda x: int(pow(x / 255.0, exponent) * 255))
 
-
 def normalize(img):
     img_array = np.array(img)
     normalized_array = (img_array - np.min(img_array)) / (np.max(img_array) - np.min(img_array))
     normalized_img = Image.fromarray((normalized_array * 255).astype(np.uint8))
-
     return normalized_img
 
 #///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -56,9 +62,9 @@ def normalize(img):
 def pbr_magic(input_images, scene):
     image_color_input, image_normal_input, image_pbr = input_images
 
-    image_color = image_color_input.resize(image_pbr.size).convert("RGB").transpose(Image.FLIP_TOP_BOTTOM)
-    image_normal = image_normal_input.resize(image_pbr.size).convert("RGB").transpose(Image.FLIP_TOP_BOTTOM)
-    image_pbr = image_pbr.convert("RGB").transpose(Image.FLIP_TOP_BOTTOM)
+    image_color = image_color_input.resize(image_pbr.size).convert("RGB")
+    image_normal = image_normal_input.resize(image_pbr.size).convert("RGB")
+    image_pbr = image_pbr.convert("RGB")
     
     roughness_map, metallic_map_in, ao_map = decode_pbr(image_pbr, scene)
     
@@ -100,12 +106,12 @@ def main(scene, nodes, status, material):
     
     threads = []
     
-    color = convert_to_pil(nodes[0])
+    color = load_img(nodes[0])
     
     if has_pbr:
-        pbr = convert_to_pil(nodes[1])
+        pbr = load_img(nodes[1])
     if has_normal:
-        normal = convert_to_pil(nodes[2])
+        normal = load_img(nodes[2])
     
     work_folder = os.path.join( ph.full_material(), material.name)
     os.makedirs(work_folder, exist_ok=True)
@@ -130,8 +136,8 @@ def main(scene, nodes, status, material):
             output_img.save(os.path.join(work_folder, img_name))
     
     if has_light:
-        light = convert_to_pil(nodes[3])
-        light_out = light.resize(color.size).convert("RGB").transpose(Image.FLIP_TOP_BOTTOM)
+        light = load_img(nodes[3])
+        light_out = light.resize(color.size).convert("RGB")
         
         if has_pbr and scene.light_mask_mode:
             light_out = ImageChops.multiply(raw_color, light_out)
