@@ -143,8 +143,8 @@ class open_file_qc(bpy.types.Operator):
 
 def runglmv():
     scene = bpy.context.scene
-    cmd = f'"{ph.hlmv()}" -game "{ph.source()}" -file "{os.path.join(ph.path_model(), scene.model_name)}.mdl"'
-    subprocess.run(cmd, shell=False, cwd=os.path.join(ph.source(), "bin"))
+    cmd = f'"{ph.hlmv()}" -game "{ph.source()}" -file "{ph.absolute_mdl()}"'
+    subprocess.run(cmd, shell=False, cwd=os.path.join(ph.source(), "models"))
 
 #///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

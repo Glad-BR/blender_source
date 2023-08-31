@@ -25,6 +25,11 @@ def source():
     scene = bpy.context.scene
     return os.path.normpath( bpy.path.abspath(scene.source_root) )
 
+def absolute_mdl():
+    scene = bpy.context.scene
+    return os.path.join( model(), str(scene.model_name)+".mdl" )
+
+
 
 def studiomdl():
     return os.path.join( os.path.dirname(source()), "bin", "studiomdl.exe" )

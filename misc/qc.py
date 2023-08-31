@@ -35,7 +35,7 @@ def write_qc():
             f.write('$staticprop\n')
             f.write('\n')
         
-        f.write(f'$modelname "{os.path.join(ph.model(), str(scene.model_name)+".mdl")}"\n')
+        f.write(f'$modelname "{ph.absolute_mdl()}"\n')
         
         f.write('\n')
         f.write('$bodygroup "Body"\n')
