@@ -1,7 +1,7 @@
 import os
-import shutil
 import subprocess
 import threading
+import time
 
 import bpy
 
@@ -40,10 +40,7 @@ def export_mat(scene):
     
     for material in get_materials():
         
-        #work_folder = os.path.join(work_folder, str(material.name) )
-        
         work_folder = os.path.join( ph.work_folder(), ph.path_material(), material.name)
-        
         os.makedirs(work_folder, exist_ok=True)
         
         if scene.multithreading:
@@ -56,11 +53,7 @@ def export_mat(scene):
     if scene.multithreading:
         for thread in threads:
             thread.join()
-    
-    #if scene.auto_deploy:
-    #    deploy_mat()
-    
-    print("Export Done")
+
 
 #///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

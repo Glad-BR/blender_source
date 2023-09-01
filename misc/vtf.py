@@ -1,6 +1,7 @@
 import os
 import subprocess
 import threading
+import time
 
 import bpy
 
@@ -8,9 +9,9 @@ from .. import root_folder
 
 
 def main(scene, work_folder):
+    start_t = time.perf_counter()
     
     VTFCmd_Path = os.path.normpath(os.path.join( root_folder, "bin", "VTFCmd.exe" ))
-    
     
     tasks = []
     
@@ -26,6 +27,13 @@ def main(scene, work_folder):
     if scene.vtf_multithreading:
         for thread in tasks:
             thread.join()
+    
+    
+    end_t = time.perf_counter()
+    total_duration = end_t - start_t
+    print(f"VTF took {total_duration:.2f}s total")
+    print("")
+
 
 def run_vtf(filename, work_folder, scene, VTFCmd_Path):
     
@@ -62,11 +70,8 @@ def run_vtf(filename, work_folder, scene, VTFCmd_Path):
     
     print("Converting:", filename)
     
-    
-    print(cmd)
-    
     # Run the VTF command
-    subprocess.run(cmd, shell=True)
+    subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     
     if DeletePNGafterVTF:
         os.remove(file)

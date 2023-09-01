@@ -7,17 +7,9 @@ from . import path as ph
 
 
 def to_bin(Input):
-    if Input == True:
-        Output = 1
-    else:
-        Output = 0
+    if Input == True: Output = 1
+    else: Output = 0
     return Output
-
-def shrink_float_length(float_number, num_digits):
-    format_string = f"{{:.{num_digits}f}}"
-    formatted_number = format_string.format(float_number)
-    return formatted_number
-
 
 
 def main(scene, status, mat_name, vmt_name):
@@ -34,7 +26,7 @@ def main(scene, status, mat_name, vmt_name):
     phongalbedotint = to_bin(scene.phongalbedotint)
     phongalbedoboost = scene.phongalbedoboost
     
-    emissiveblendstrength = shrink_float_length(scene.light_power, 3)
+    emissiveblendstrength = scene.light_power
     basealphaenvmapmask = to_bin(scene.basealphaenvmapmask)
     envmapfresnel = to_bin(scene.envmapfresnel)
     
@@ -60,7 +52,7 @@ def main(scene, status, mat_name, vmt_name):
         #if Detail:
         #    f.write(f'\t"$detail"               "{base_texture}/Detail"\n')
         #    f.write(f'\t"$detailscale"          "1"\n')
-        #    f.write(f'\t"$detailblendfactor"    "{shrink_float_length(scene.detailblendfactor, 3)}"\n')
+        #    f.write(f'\t"$detailblendfactor"    "{scene.detailblendfactor}"\n')
         #    f.write(f'\t"$detailblendmode"      "{scene.detailblendmode}"\n')
         #    f.write(f'\t \n')
 
