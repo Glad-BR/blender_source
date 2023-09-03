@@ -2,7 +2,6 @@ import os
 import shutil
 import subprocess
 import threading
-import time
 
 import bpy
 
@@ -62,61 +61,37 @@ class Export_Texture(bpy.types.Operator):
     bl_label = "Export"
     def execute(self, context):
         scene = context.scene
-        self.report({'INFO'}, "Exporting Textures")
-        
-        start_t = time.perf_counter()
-        
-        util.export_mat(scene)
-        
-        end_t = time.perf_counter()
-        total_duration = end_t - start_t
-        self.report({'INFO'}, f"Done! in: {int(time.perf_counter() - start_t)}s")
-        
+        start_t = util.time_start()
+        util.export_mat()
+        self.report({'INFO'}, f"Done! in: {util.time_stop(start_t)}s")
         return {'FINISHED'}
 
 class Export_Mesh(bpy.types.Operator):
     bl_idname = "object.mesh_export"
     bl_label = "Export Pys"
     def execute(self, context):
-        
         if studio_ok():
-            self.report({'INFO'}, "Exporting Model")
-            start_t = time.perf_counter()
+            start_t = util.time_start()
             util.export_mesh()
-            
             if bpy.context.scene.del_modelsrc:
                 shutil.rmtree(os.path.join(ph.work_folder(),ph.path_compile_model()))
-            
-            end_t = time.perf_counter()
-            total_duration = end_t - start_t
-            self.report({'INFO'}, f"Done! in: {int(time.perf_counter() - start_t)}s")
-            
+            self.report({'INFO'}, f"Done! in: {util.time_stop(start_t)}s")
         else: self.report({'INFO'}, "gameinfo.txt not found")
-
         return {'FINISHED'}
 
 class Export_All(bpy.types.Operator):
     bl_idname = "object.export_all"
     bl_label = "Export All"
     def execute(self, context):
-        
         if studio_ok():
-            self.report({'INFO'}, "Exporting Model & Textures")
-            start_t = time.perf_counter()
-            
-            util.export_mat(context.scene,)
+            start_t = util.time_start()
+            util.export_mat()
             util.export_mesh()
-            self.report({'INFO'}, "Export Complete")
-            
             if bpy.context.scene.del_modelsrc:
                 shutil.rmtree(os.path.join(ph.work_folder(),ph.path_compile_model()))
-            
-            self.report({'INFO'}, f"Done! in: {int(time.perf_counter() - start_t)}s")
-            
+            self.report({'INFO'}, f"Done! in: {util.time_stop(start_t)}s")
         else: self.report({'INFO'}, "gameinfo.txt not found")
-        
         return {'FINISHED'}
-
 
 class open_hlmv(bpy.types.Operator):
     bl_idname = "object.open_hlmv"
@@ -162,9 +137,10 @@ class open_file_qc(bpy.types.Operator):
 #///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 def runglmv():
-    scene = bpy.context.scene
     cmd = f'"{ph.hlmv()}" -game "{ph.source()}" -file "{ph.absolute_mdl()}"'
-    subprocess.run(cmd, shell=False, cwd=os.path.join(ph.source(), "models"))
+    target = os.path.join(ph.source(), "models")
+    subprocess.run(cmd, shell=False, cwd=target)
+    print(f"hlvm started with args: {cmd}")
 
 #///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

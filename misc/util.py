@@ -18,6 +18,15 @@ from . import pbr, qc, smd, vmt, vtf
 #    
 #    shutil.copytree(source_folder, destination_folder)
 
+#///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+def time_start():
+    return time.perf_counter()
+
+def time_stop(start_t):
+    return int(time.perf_counter() - start_t)
+
+#///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 def export_mesh():
     
@@ -34,11 +43,19 @@ def export_mesh():
 
 #///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-def export_mat(scene):
+def export_mat():
+    
+    scene = bpy.context.scene
     
     threads = []
     
-    for material in get_materials():
+    materials = get_materials()
+    
+    print("")
+    print("Materials To Export:")
+    for material in materials: print(material.name)
+    
+    for material in materials:
         
         work_folder = os.path.join( ph.work_folder(), ph.path_material(), material.name)
         os.makedirs(work_folder, exist_ok=True)

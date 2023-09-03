@@ -18,7 +18,6 @@ def build(self, context):
     
     row1 = layout.box().row(align=True)
     tab3.list_mats_box(row1, scene)
-    #lod_list_box(row1, scene)
     draw_prop_config(row1, scene)
     
     box = layout.box()
@@ -55,26 +54,20 @@ def general_box(layout, scene):
 
 #///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-def lod_list_box(layout, scene):
-    row = layout.row(align=True)
-    box = row.box()
-    coll1 = box.column(align=True)
-    for [lod, ang] in lod_num:
-        coll1.label(text="Lod: "+str(lod)+" With Angle: "+str(ang))
-
-#///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-def draw_path_in(layout, scene):
+def draw_prop_config(layout, scene):
     
-    box = layout.box()
+    box2 = layout.box().column()
     
-    row = box.row(align=False)
+    #row1 = box2.row(align=True)
+    row1 = box2
     
-    coll2 = row.column(align=True)
-    coll2.prop(scene, "model_target_location", text="Model Location")
-    coll2.prop(scene, "model_name", text="Model Name")
+    row1.prop(scene, "staticprop", text="staticprop")
+    row1.prop(scene, "concave", text="concave")
     
-    box.box().label(text= "Full Material Path: [ "+str(common.models_local_path(scene))+" ]" )
+    row1.prop(scene, "contents", text="contents")
+    
+    row1.prop(scene, "mass", text="mass")
+    row1.prop(scene, "inertia", text="inertia")
 
 
 def draw_formats(layout, scene):
@@ -90,24 +83,7 @@ def draw_formats(layout, scene):
     row2.operator("object.make_qc", text="Write QC")
     row2.operator("object.compile_qc", text="Compile")
     row2.operator("wm.open_file_modelscr", text="", icon='FILE')
-    
 
-
-def draw_prop_config(layout, scene):
-    
-    box2 = layout.box().column()
-    
-    #row1 = box2.row(align=True)
-    row1 = box2
-    
-    row1.prop(scene, "staticprop", text="staticprop")
-    row1.prop(scene, "concave", text="concave")
-    
-    row1.prop(scene, "contents", text="contents")
-    
-    row1.prop(scene, "mass", text="mass")
-    row1.prop(scene, "inertia", text="inertia")
-    
 
 
 def draw_source_input(layout, scene):
@@ -116,7 +92,12 @@ def draw_source_input(layout, scene):
     
     box.prop(scene, "source_root", text="[gameinfo.txt] Path")
     
-    box.label(text=f"studiomdl: {is_ok(ph.studiomdl())} | hlmv: {is_ok(ph.hlmv())}") # @ [ {ph.source()} ]
+    row = box.row(align=True)
+    row.operator("object.dev_dummy", text=f"studiomdl: {is_ok(ph.studiomdl())}", depress=common.studio_ok())
+    row.operator("object.dev_dummy", text=f"hlmv: {is_ok(ph.hlmv())}", depress=common.hlmv_ok())
+    
+
+#///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 def is_ok(path):
     if os.path.exists(path): return "OK"
@@ -185,13 +166,22 @@ class open_file_modelscr(bpy.types.Operator):
 
 #///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+class dev_dummy(bpy.types.Operator):
+    bl_idname = "object.dev_dummy"
+    bl_label = "Open File Browser"
+    def execute(self, context):
+        return {'FINISHED'}
+
+#///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 classes = [
     dev_use_smd,
     dev_use_dmx,
     export_auto,
     compile_qc,
     make_qc,
-    open_file_modelscr
+    open_file_modelscr,
+    dev_dummy
 ]
 
 

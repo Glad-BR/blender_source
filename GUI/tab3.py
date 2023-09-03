@@ -1,5 +1,6 @@
 import bpy
 
+from .. import pbr_channels
 from ..misc import util
 from . import common
 
@@ -48,12 +49,8 @@ def list_mats_box(layout, scene):
     
     box2 = coll1.box().column(align=True)
     rowrow = box2.row(align=True)
-    #rowrow.label(text="Active Materials:")
     rowrow.prop(scene, "enable_display_mats", text="Active Materials:")
     rowrow.label(text="Found Textures:")
-    
-    
-    #boxy2 = box2.column(align=True)
     
     if scene.enable_display_mats:
         
@@ -109,13 +106,6 @@ class node_label_reset(bpy.types.Operator):
 
 
 #///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-pbr_channels = [
-    ('red', "RED", "Red RGB Channel"),
-    ('green', "GREEN", "Green RGB Channel"),
-    ('blue', "BLUE", "Blue RGB Channel"),
-    
-]
 
 
 classes = [

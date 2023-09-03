@@ -37,8 +37,12 @@ def vtf_box(layout, scene):
     row.label(text="VTF Formats.")
     row.label(text="Color Channel.")
     row.label(text="Alpha Channel.")
-    row.operator("object.vtf_reset", text="", icon='FILE_REFRESH')
     
+    row2 = row.row(align=True)
+    row2.scale_x = 0.5
+    row2.operator("object.defaults_low", text="Low")
+    row2.operator("object.defaults_med", text="Mid")
+    row2.operator("object.defaults_high", text="High")
 
     row4 = box2.row(align=True)
     row4.prop(scene, "specular_format", text="Specular")
@@ -81,18 +85,46 @@ def clamp_box(layout, scene):
 
 #///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-class vtf_reset(bpy.types.Operator):
-    bl_idname = "object.vtf_reset"
+class defaults_low(bpy.types.Operator):
+    bl_idname = "object.defaults_low"
     bl_label = "Reset VTF to default"
-
     def execute(self, context):
-        
         scene = context.scene
         
-        #scene.color_format            = "DXT1"
-        #scene.color_alpha_format      = "DXT5"
+        scene.specular_format         = "DXT1"
+        scene.specular_alpha_format   = "DXT5"
+        scene.normal_format           = "DXT1"
+        scene.normal_alpha_format     = "DXT5"
+        scene.phong_format            = "DXT1"
+        scene.phong_alpha_format      = "DXT5"
+    
+        self.report({'INFO'}, "VTF Settings Reseted")
+        return {'FINISHED'}
+
+class defaults_med(bpy.types.Operator):
+    bl_idname = "object.defaults_med"
+    bl_label = "Reset VTF to default"
+    def execute(self, context):
+        scene = context.scene
+        
         scene.specular_format         = "DXT1"
         scene.specular_alpha_format   = "DXT1"
+        scene.normal_format           = "DXT1"
+        scene.normal_alpha_format     = "DXT1"
+        scene.phong_format            = "DXT1"
+        scene.phong_alpha_format      = "DXT5"
+    
+        self.report({'INFO'}, "VTF Settings Reseted")
+        return {'FINISHED'}
+
+class defaults_high(bpy.types.Operator):
+    bl_idname = "object.defaults_high"
+    bl_label = "Reset VTF to default"
+    def execute(self, context):
+        scene = context.scene
+        
+        scene.specular_format         = "DXT1"
+        scene.specular_alpha_format   = "BGRA8888"
         scene.normal_format           = "BGRA8888"
         scene.normal_alpha_format     = "BGRA8888"
         scene.phong_format            = "BGRA8888"
@@ -101,11 +133,16 @@ class vtf_reset(bpy.types.Operator):
         self.report({'INFO'}, "VTF Settings Reseted")
         return {'FINISHED'}
 
+#///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 
 #///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 classes = [
-    vtf_reset,
+    defaults_low,
+    defaults_med,
+    defaults_high
 ]
 
 #///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -114,11 +151,8 @@ def register():
     for cls in classes:
         bpy.utils.register_class(cls)
     
-    #bpy.types.Scene.color_format = bpy.props.StringProperty(default="DXT1", description="color_format")
-    #bpy.types.Scene.color_alpha_format = bpy.props.StringProperty(default="DXT5", description="color_alpha_format")
-    
     bpy.types.Scene.specular_format = bpy.props.StringProperty(default="DXT1", description="specular_format")
-    bpy.types.Scene.specular_alpha_format = bpy.props.StringProperty(default="DXT1", description="specular_alpha_format")
+    bpy.types.Scene.specular_alpha_format = bpy.props.StringProperty(default="BGRA8888", description="specular_alpha_format")
     
     bpy.types.Scene.normal_format = bpy.props.StringProperty(default="BGRA8888", description="normal_format")
     bpy.types.Scene.normal_alpha_format = bpy.props.StringProperty(default="BGRA8888", description="normal_alpha_format")
@@ -143,8 +177,6 @@ def unregister():
     for cls in classes:
         bpy.utils.unregister_class(cls)
     
-    #del bpy.types.Scene.color_format
-    #del bpy.types.Scene.color_alpha_format
     del bpy.types.Scene.specular_format
     del bpy.types.Scene.specular_alpha_format
     del bpy.types.Scene.normal_format

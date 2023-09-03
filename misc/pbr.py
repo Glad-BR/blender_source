@@ -60,6 +60,8 @@ def pbr_magic(input_images):
     scene = bpy.context.scene
     image_color_input, image_normal_input, image_pbr = input_images
 
+    color_original_size = image_color_input.size
+
     image_color = image_color_input.resize(image_pbr.size).convert("RGB")
     image_normal = image_normal_input.resize(image_pbr.size).convert("RGB")
     image_pbr = image_pbr.convert("RGB")
@@ -89,11 +91,13 @@ def pbr_magic(input_images):
     else:
         image_normal.putalpha(glossy_map)
     
-    specular.putalpha(metallic_map)
     
     phong1 = exponent(glossy_map, 4.9)
     full_white = Image.new('L', image_pbr.size, 255)
     phong = Image.merge('RGB', (phong1.convert('L'), full_white, full_white))
+    
+    specular.putalpha(metallic_map)
+    specular = specular.resize(color_original_size)
     
     print(f"PBR Magic Done in {int(time.perf_counter() - start_t)}s")
     return [specular, image_normal, phong], image_color

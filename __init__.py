@@ -1,4 +1,3 @@
-
 import os
 import subprocess
 import sys
@@ -12,13 +11,21 @@ bl_info = {
 }
 
 lod_num = [
-    [20, 10],
-    [40, 20],
-    [80, 30],
-    [160, 40],
+    [20, 5],
+    [40, 10],
+    [80, 15],
+    [160, 20],
 ]
 
-root_folder = os.path.dirname(os.path.abspath(__file__))
+pbr_channels = [
+    ('red', "RED", "Red RGB Channel"),
+    ('green', "GREEN", "Green RGB Channel"),
+    ('blue', "BLUE", "Blue RGB Channel"),
+]
+
+root_folder = os.path.dirname(__file__)
+
+#///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 def check_pill():
     try:
@@ -33,6 +40,7 @@ def check_pill():
             print("PIL (Pillow) has been successfully installed.")
         except subprocess.CalledProcessError:
             print("Failed to install PIL. Please install Pillow manually Into Blender Python Enviroment.")
+
 
 def register():
     
