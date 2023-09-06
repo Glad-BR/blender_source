@@ -1,4 +1,3 @@
-
 import logging as log
 import os
 import subprocess
@@ -54,10 +53,10 @@ def export_mat():
     materials = get_materials()
     
     
-    log.info("")
-    log.info("Materials To Export:")
-    for material in materials: log.info(material.name)
-    log.info("")
+    print("")
+    print("Materials To Export:")
+    for material in materials: print(material.name)
+    print("")
     
     for index, material in enumerate(materials):
         
@@ -73,9 +72,9 @@ def export_mat():
         else:
             process_material(scene, material, work_folder)
         
-        log.info("")
-        log.info(f"[{index+1}/{len(materials)}] Material [{material.name}] done in {time_stop(calc_time)}s")
-        log.info("")
+        print("")
+        print(f"[{index+1}/{len(materials)}] Material [{material.name}] done in {time_stop(calc_time)}s")
+        print("")
     
     if scene.multithreading:
         for thread in threads:

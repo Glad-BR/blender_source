@@ -33,8 +33,8 @@ def main(scene, work_folder):
     
     end_t = time.perf_counter()
     total_duration = end_t - start_t
-    log.info(f"VTF took {total_duration:.2f}s total")
-    log.info("")
+    print(f"VTF took {total_duration:.2f}s total")
+    print("")
 
 
 def run_vtf(filename, work_folder, scene, VTFCmd_Path):
@@ -70,7 +70,7 @@ def run_vtf(filename, work_folder, scene, VTFCmd_Path):
     if filename == "Normal.png":
         cmd = cmd + '-flag Normal '
     
-    log.info("Converting:", filename)
+    print("Converting:", filename)
     
     # Run the VTF command
     subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
@@ -81,6 +81,6 @@ def run_vtf(filename, work_folder, scene, VTFCmd_Path):
     vtf_file = os.path.join(work_folder, util.replace_file_extension(filename, ".vtf"))
     
     if os.path.exists(vtf_file):
-        log.info("File:", filename, "Converted - OK")
+        print("File:", filename, "Converted - OK")
     else:
-        log.info("Convert Failed, VTF File Not found")
+        print("Convert Failed, VTF File Not found")

@@ -45,7 +45,7 @@ def make_lod(collection, lod_levels):
         make_smooth_coll(collection)
         
         for obj in objects:
-            log.info( obj.name+" With Lod: "+str(angle)+"Using Angle: "+str(angle) )
+            print( obj.name+" With Lod: "+str(angle)+"Using Angle: "+str(angle) )
             
             add_decimate_modifier(obj, lod_level)
         

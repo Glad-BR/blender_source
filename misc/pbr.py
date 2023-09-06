@@ -26,16 +26,16 @@ def load_img(node):
     
     path = os.path.abspath(bpy.path.abspath(node.image.filepath))
     if devmode:
-        log.info(f"path: {path}")
-        log.info(os.path.exists(path))
+        print(f"path: {path}")
+        print(os.path.exists(path))
     
     try:
-        if devmode: log.info(f"Loading IMG: {os.path.basename(path)}")
+        if devmode: print(f"Loading IMG: {os.path.basename(path)}")
         return Image.open(path)
     except FileNotFoundError:
         if devmode:
-            log.info("Original File Not Found, Converting Existing Loaded IMG")
-            log.info(f"Converting To Pil: {os.path.basename(path)}")
+            print("Original File Not Found, Converting Existing Loaded IMG")
+            print(f"Converting To Pil: {os.path.basename(path)}")
         return convert_to_pil(node)
 
 
@@ -54,7 +54,7 @@ def decode_pbr(pbr):
             ""
         ]
         for item in dev:
-            log.info(item)
+            print(item)
     
     roughness = channel_images.get(scene.roughness_channel, None)
     metallic = channel_images.get(scene.metallic_channel, None)
@@ -86,16 +86,16 @@ def pbr_magic(input_images):
     
     
     if scene.use_metallic:
-        if scene.devmode: log.info("Using Metallic Map in Color")
+        if scene.devmode: print("Using Metallic Map in Color")
         spec2 = ImageChops.multiply(glossy_map, metallic_map)
         specular = ImageChops.multiply(image_color, spec2.convert('RGB'))
     else:
-        if scene.devmode: log.info("Ignoring Metallic in Color")
+        if scene.devmode: print("Ignoring Metallic in Color")
         specular = ImageChops.multiply(image_color, glossy_map.convert('RGB'))
     
     
     if scene.use_ao:
-        if scene.devmode: log.info("Using AO in Specular Texture")
+        if scene.devmode: print("Using AO in Specular Texture")
         specular = ImageChops.multiply(specular, ao_map.convert('RGB'))
     
     if scene.normalmap_alpha_expo:
@@ -131,18 +131,18 @@ def main(scene, nodes, status, material):
     if has_light: light = load_img(nodes[3])
 
     
-    #log.info("Color:", has_color)
-    #log.info("PBR:", has_pbr)
-    #log.info("Normal:", has_normal)
-    #log.info("Emissive:", has_light)
-    #log.info("")
-    #log.info("use_phong:", scene.use_phong)
-    #log.info("use_env:", scene.use_env)
-    #log.info("use_metallic:", scene.use_metallic)
-    #log.info("")
+    #print("Color:", has_color)
+    #print("PBR:", has_pbr)
+    #print("Normal:", has_normal)
+    #print("Emissive:", has_light)
+    #print("")
+    #print("use_phong:", scene.use_phong)
+    #print("use_env:", scene.use_env)
+    #print("use_metallic:", scene.use_metallic)
+    #print("")
     
     if has_color and has_pbr and has_normal:
-        #log.info("Using Regular PBR Export")
+        #print("Using Regular PBR Export")
         
         input_images = [color, normal, pbr]
         output_images, raw_color = pbr_magic(input_images)
@@ -161,8 +161,8 @@ def main(scene, nodes, status, material):
     
     
     if not has_pbr:
-        log.info("Using Fallback Export")
+        print("Using Fallback Export")
         if has_color: color.save(os.path.join(work_folder, "Specular.png"))
         if has_normal: normal.save(os.path.join(work_folder, "Normal.png"))
     
-    log.info(f"PBR Export Done in {util.time_stop(time_temp)}s")
+    print(f"PBR Export Done in {util.time_stop(time_temp)}s")

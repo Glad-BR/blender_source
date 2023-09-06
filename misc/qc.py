@@ -107,10 +107,10 @@ def write_texturegroup(f):
     f.write(f'\t{skin1}\n')
     f.write('}\n')
     
-    log.info("")
-    log.info(skin0)
-    log.info(skin1)
-    log.info("")
+    print("")
+    print(skin0)
+    print(skin1)
+    print("")
 
 
 

@@ -18,7 +18,7 @@ def main(scene, status, mat_name, vmt_name):
     Has_color, Has_pbr, Has_normal, Has_Light = status
     
     #Create VMT
-    if scene.devmode: log.info(f"Creating VMT for Texture Name: {vmt_name}")
+    if scene.devmode: print(f"Creating VMT for Texture Name: {vmt_name}")
     
     
     base_texture = str( os.path.join(ph.material(), mat_name) )
