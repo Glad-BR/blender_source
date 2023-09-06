@@ -1,3 +1,4 @@
+import logging as log
 import os
 
 import bpy
@@ -34,9 +35,6 @@ def make_smooth_coll(collection):
         make_smooth_obj(obj)
 
 
-
-
-
 def make_lod(collection, lod_levels):
     
     original_name = collection.name
@@ -47,7 +45,7 @@ def make_lod(collection, lod_levels):
         make_smooth_coll(collection)
         
         for obj in objects:
-            print( obj.name+" With Lod: "+str(angle)+"Using Angle: "+str(angle) )
+            log.info( obj.name+" With Lod: "+str(angle)+"Using Angle: "+str(angle) )
             
             add_decimate_modifier(obj, lod_level)
         

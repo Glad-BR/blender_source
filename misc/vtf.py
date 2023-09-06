@@ -1,3 +1,4 @@
+import logging as log
 import os
 import subprocess
 import threading
@@ -6,6 +7,7 @@ import time
 import bpy
 
 from .. import root_folder
+from . import util
 
 
 def main(scene, work_folder):
@@ -31,8 +33,8 @@ def main(scene, work_folder):
     
     end_t = time.perf_counter()
     total_duration = end_t - start_t
-    print(f"VTF took {total_duration:.2f}s total")
-    print("")
+    log.info(f"VTF took {total_duration:.2f}s total")
+    log.info("")
 
 
 def run_vtf(filename, work_folder, scene, VTFCmd_Path):
@@ -68,7 +70,7 @@ def run_vtf(filename, work_folder, scene, VTFCmd_Path):
     if filename == "Normal.png":
         cmd = cmd + '-flag Normal '
     
-    print("Converting:", filename)
+    log.info("Converting:", filename)
     
     # Run the VTF command
     subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
@@ -76,4 +78,9 @@ def run_vtf(filename, work_folder, scene, VTFCmd_Path):
     if DeletePNGafterVTF:
         os.remove(file)
     
-    print("File:", filename, "Converted - OK")
+    vtf_file = os.path.join(work_folder, util.replace_file_extension(filename, ".vtf"))
+    
+    if os.path.exists(vtf_file):
+        log.info("File:", filename, "Converted - OK")
+    else:
+        log.info("Convert Failed, VTF File Not found")

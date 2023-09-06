@@ -24,11 +24,13 @@ class SimplePanel(bpy.types.Panel):
         layout.label(text=f"Root @ {str(root_folder)}")
         
         tabs = layout.box().row(align=True)
+        tabs.scale_y = 1.1
         
-        tabs.label(text="Auto convert and create vmt.")
+        #tabs.label(text="Auto convert and create vmt.")
         
         tabs.prop(scene, "multithreading", text="mat_multithreading")
         tabs.prop(scene, "vtf_multithreading", text="vtf_multithreading")
+        tabs.prop(scene, "devmode", text="DEV")
         
         tabz = tabs.row(align=True)
         tabz.scale_y = 1.4
@@ -81,13 +83,21 @@ class TabOperator3(bpy.types.Operator):
         context.scene.pannel_current_tab = 3
         return {'FINISHED'}
 
+#///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+#///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 classes = [
     SimplePanel,
     TabOperator0,
     TabOperator1,
     TabOperator2,
-    TabOperator3,
+    TabOperator3
 ]
+
+
 
 def register():
     
@@ -99,6 +109,8 @@ def register():
     bpy.types.Scene.pil_multithreading = bpy.props.BoolProperty(default=False)
     
     bpy.types.Scene.pannel_current_tab = bpy.props.IntProperty(default=0, min=0, max=3)
+    
+    bpy.types.Scene.devmode = bpy.props.BoolProperty(default=False)
 
 
 

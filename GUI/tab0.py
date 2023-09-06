@@ -27,7 +27,6 @@ def build(self, context):
     
     draw_formats(layout.box(), scene)
     
-    
     draw_source_input(layout, scene)
     
     common.export_box(self, context)
@@ -37,11 +36,16 @@ def build(self, context):
 
 def general_box(layout, scene):
     box = layout.box()
-    box.label(text="Prop Path Info")
+    
+    row = box.row(align=True)
+    row.label(text="Prop Path Info")
+    row.scale_x = 0.2
+    row.operator("object.add_model_to_mat_string", text="Sync MAT to MDL")
     
     coll1 = box.column(align=True)
     coll1.prop(scene, "material_path", text="Materials/")
     coll1.prop(scene, "model_path", text="Models/")
+    
     
     coll2 = box.column(align=True)
     coll2.prop(scene, "model_name", text="Model Name")
@@ -93,8 +97,8 @@ def draw_source_input(layout, scene):
     box.prop(scene, "source_root", text="[gameinfo.txt] Path")
     
     row = box.row(align=True)
-    row.operator("object.dev_dummy", text=f"studiomdl: {is_ok(ph.studiomdl())}", depress=common.studio_ok())
-    row.operator("object.dev_dummy", text=f"hlmv: {is_ok(ph.hlmv())}", depress=common.hlmv_ok())
+    row.operator("object.dev_dummy", text=f"studiomdl [{is_ok(ph.studiomdl())}]", depress=common.studio_ok())
+    row.operator("object.dev_dummy", text=f"hlmv [{is_ok(ph.hlmv())}]", depress=common.hlmv_ok())
     
 
 #///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -121,17 +125,15 @@ class dev_use_dmx(bpy.types.Operator):
         scene.gbr_export_format = 'DMX'
         return {'FINISHED'}
 
-
+#///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 class export_auto(bpy.types.Operator):
     bl_idname = "object.export_auto"
     bl_label = "Export Pys"
     def execute(self, context):
         global lod_num
-        scene = bpy.context.scene
-        smd.func_export_ref(lod_num, scene.ref_collection)
-        scene = bpy.context.scene
-        smd.func_export_pys(scene.pys_collection)
+        smd.func_export_ref(lod_num, bpy.context.scene.ref_collection)
+        smd.func_export_pys(bpy.context.scene.pys_collection)
         return {'FINISHED'}
 
 
@@ -139,7 +141,6 @@ class compile_qc(bpy.types.Operator):
     bl_idname = "object.compile_qc"
     bl_label = "Export Pys"
     def execute(self, context):
-        scene = bpy.context.scene
         util.run_studiomdl()
         return {'FINISHED'}
 
@@ -153,10 +154,19 @@ class make_qc(bpy.types.Operator):
 
 #///////////////////////////////////////////////////////////////////////////////
 
+class add_model_to_mat_string(bpy.types.Operator):
+    bl_idname = "object.add_model_to_mat_string"
+    bl_label = "Export Pys"
+    def execute(self, context):
+        scene = context.scene
+        scene.material_path = os.path.normpath(os.path.join("models", scene.model_path))
+        return {'FINISHED'}
+
+#///////////////////////////////////////////////////////////////////////////////
+
 class open_file_modelscr(bpy.types.Operator):
     bl_idname = "wm.open_file_modelscr"
     bl_label = "Open File Browser"
-    
     def execute(self, context):
         # Open the file browser to the specific path
         path = os.path.join(ph.work_folder(),ph.path_compile_model())
@@ -180,8 +190,9 @@ classes = [
     export_auto,
     compile_qc,
     make_qc,
+    add_model_to_mat_string,
     open_file_modelscr,
-    dev_dummy
+    dev_dummy,
 ]
 
 

@@ -27,24 +27,24 @@ def source():
 
 def absolute_mdl():
     scene = bpy.context.scene
-    return os.path.join( model(), str(scene.model_name)+".mdl" )
+    return os.path.normpath( os.path.join( model(), str(scene.model_name)+".mdl" ) )
 
 
 
 def studiomdl():
-    return os.path.join( os.path.dirname(source()), "bin", "studiomdl.exe" )
+    return os.path.normpath( os.path.join( os.path.dirname(source()), "bin", "studiomdl.exe" ) )
 
 def hlmv():
-    return os.path.join( os.path.dirname(source()), "bin", "hlmv.exe" )
+    return os.path.normpath( os.path.join( os.path.dirname(source()), "bin", "hlmv.exe" ) )
 
 def path_material():
-    return os.path.join( "materials", material() )
+    return os.path.normpath( os.path.join( "materials", material() ) )
 
 def path_model():
-    return os.path.join( "models", model() )
+    return os.path.normpath( os.path.join( "models", model() ) )
 
 def path_compile_model():
-    return os.path.join( "modelsrc", model() )
+    return os.path.normpath( os.path.join( "modelsrc", model() ) )
 
 
 def full_material():

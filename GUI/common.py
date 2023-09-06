@@ -1,3 +1,4 @@
+import logging as log
 import os
 import shutil
 import subprocess
@@ -21,11 +22,10 @@ def export_box(self, context):
     
     row1 = box1.box().row(align=True)
     
-    row1.prop(scene, "only_vmt", text="Only Write VMT")
     row1.prop(scene, "convert_vtf", text="Make VTF")
     row1.prop(scene, "make_vmt", text="Make VMT")
     row1.prop(scene, "del_modelsrc", text="Delete Modelscr")
-    
+    row1.prop(scene, "make_skin_groups", text="AutoEmissive Skin")
     
     funny3 = row1.row(align=True)
     funny3.scale_x = 0.65
@@ -136,11 +136,15 @@ class open_file_qc(bpy.types.Operator):
 
 #///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+
+
+#///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 def runglmv():
     cmd = f'"{ph.hlmv()}" -game "{ph.source()}" -file "{ph.absolute_mdl()}"'
     target = os.path.join(ph.source(), "models")
     subprocess.run(cmd, shell=False, cwd=target)
-    print(f"hlvm started with args: {cmd}")
+    log.info(f"hlvm started with args: {cmd}")
 
 #///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -173,13 +177,13 @@ def register():
     
     bpy.types.Scene.surfaceprop = bpy.props.StringProperty(default='metal', description="surfaceprop")
 
-    bpy.types.Scene.only_vmt = bpy.props.BoolProperty(default=False)
     bpy.types.Scene.convert_vtf = bpy.props.BoolProperty(default=True)
     bpy.types.Scene.make_vmt = bpy.props.BoolProperty(default=True)
+    bpy.types.Scene.make_skin_groups = bpy.props.BoolProperty(default=True)
     
     bpy.types.Scene.del_modelsrc = bpy.props.BoolProperty(default=False)
     
-    bpy.types.Scene.make_skin_groups = bpy.props.BoolProperty(default=True)
+    
 
 #///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

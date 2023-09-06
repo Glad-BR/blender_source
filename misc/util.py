@@ -1,3 +1,5 @@
+
+import logging as log
 import os
 import subprocess
 import threading
@@ -11,12 +13,7 @@ from . import pbr, qc, smd, vmt, vtf
 
 #///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#def deploy_mat():
-#    
-#    source_folder = os.path.join(ph.work_folder(), "materials")
-#    destination_folder = os.path.join(ph.source(), "materials")
-#    
-#    shutil.copytree(source_folder, destination_folder)
+
 
 #///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -24,7 +21,12 @@ def time_start():
     return time.perf_counter()
 
 def time_stop(start_t):
-    return int(time.perf_counter() - start_t)
+    return round(time.perf_counter() - start_t)
+
+def replace_file_extension(file_name, new_extension):
+    base_name, current_extension = os.path.splitext(file_name)
+    new_file_name = base_name + new_extension
+    return new_file_name
 
 #///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -51,11 +53,15 @@ def export_mat():
     
     materials = get_materials()
     
-    print("")
-    print("Materials To Export:")
-    for material in materials: print(material.name)
     
-    for material in materials:
+    log.info("")
+    log.info("Materials To Export:")
+    for material in materials: log.info(material.name)
+    log.info("")
+    
+    for index, material in enumerate(materials):
+        
+        calc_time = time_start()
         
         work_folder = os.path.join( ph.work_folder(), ph.path_material(), material.name)
         os.makedirs(work_folder, exist_ok=True)
@@ -66,6 +72,10 @@ def export_mat():
             thread.start()
         else:
             process_material(scene, material, work_folder)
+        
+        log.info("")
+        log.info(f"[{index+1}/{len(materials)}] Material [{material.name}] done in {time_stop(calc_time)}s")
+        log.info("")
     
     if scene.multithreading:
         for thread in threads:
@@ -88,7 +98,7 @@ def process_material(scene, material, work_folder):
     
     nodes, status = decode_material_nodes(scene, material)
     
-    if not scene.only_vmt:
+    if scene.convert_vtf:
         pbr.main(scene, nodes, status, material)
         if scene.convert_vtf:
             vtf.main(scene, work_folder)
@@ -99,15 +109,24 @@ def process_material(scene, material, work_folder):
             status[3] = False
             vmt.main(scene, status, material.name, (material.name+'_OFF'))
 
+
 def get_materials():
     active_materials = []
+    encountered_names = set()  # Keep track of encountered material names
     
     for obj in bpy.context.scene.objects:
         for slot in obj.material_slots:
-            if slot.material:
-                active_materials.append(slot.material)
+            if slot.material and slot.material.name not in encountered_names:
+                
+                try:
+                    slot.material.node_tree.nodes
+                    active_materials.append(slot.material)
+                    encountered_names.add(slot.material.name)
+                except AttributeError:
+                    None
                 
     return active_materials
+
 
 #///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

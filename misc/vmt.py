@@ -1,3 +1,4 @@
+import logging as log
 import os
 
 import bpy
@@ -17,7 +18,7 @@ def main(scene, status, mat_name, vmt_name):
     Has_color, Has_pbr, Has_normal, Has_Light = status
     
     #Create VMT
-    print("Creating VMT for Texture Name: "+str(mat_name))
+    if scene.devmode: log.info(f"Creating VMT for Texture Name: {vmt_name}")
     
     
     base_texture = str( os.path.join(ph.material(), mat_name) )

@@ -1,3 +1,4 @@
+import logging as log
 import os
 
 import bpy
@@ -53,7 +54,7 @@ def write_qc():
         f.write(f'$cdmaterials "{ph.material()}"\n')
         f.write('\n')
         
-        if scene.make_lods: write_texturegroup(f)
+        if scene.make_skin_groups: write_texturegroup(f)
         
         f.write('\n')
         
@@ -106,10 +107,10 @@ def write_texturegroup(f):
     f.write(f'\t{skin1}\n')
     f.write('}\n')
     
-    print("")
-    print(skin0)
-    print(skin1)
-    print("")
+    log.info("")
+    log.info(skin0)
+    log.info(skin1)
+    log.info("")
 
 
 

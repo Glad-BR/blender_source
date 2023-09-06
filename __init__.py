@@ -1,8 +1,10 @@
+import logging as log
 import os
-import subprocess
 import sys
 
 import bpy
+
+#///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 bl_info = {
     "name": "Blender Source Material & Model",
@@ -11,10 +13,9 @@ bl_info = {
 }
 
 lod_num = [
-    [20, 5],
-    [40, 10],
-    [80, 15],
-    [160, 20],
+    [25, 5],
+    [50, 10],
+    [75, 15]
 ]
 
 pbr_channels = [
@@ -28,19 +29,23 @@ root_folder = os.path.dirname(__file__)
 #///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 def check_pill():
+    
+    import subprocess
+    
     try:
         import PIL
     except ImportError:
         # PIL is not installed, try to install it
-        print("PIL is not installed. Attempting to install...")
+        log.warn("PIL is not installed. Attempting to install...")
 
         try:
             subprocess.check_call([sys.executable, "-m", "ensurepip"])
             subprocess.check_call([sys.executable, "-m", "pip", "install", "Pillow"])
-            print("PIL (Pillow) has been successfully installed.")
+            log.info("PIL (Pillow) has been successfully installed.")
         except subprocess.CalledProcessError:
-            print("Failed to install PIL. Please install Pillow manually Into Blender Python Enviroment.")
+            log.error("Failed to install PIL. Please install Pillow manually Into Blender Python Enviroment.")
 
+#///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 def register():
     
@@ -50,6 +55,7 @@ def register():
     GUI.register()
     main.register()
     misc.register()
+    
 
 
 def unregister():
