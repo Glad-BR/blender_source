@@ -30,11 +30,8 @@ def main(scene, work_folder):
         for thread in tasks:
             thread.join()
     
-    
-    end_t = time.perf_counter()
-    total_duration = end_t - start_t
-    print(f"VTF took {total_duration:.2f}s total")
-    print("")
+    if scene.devmode:
+        print(f"VTF conversion done in: {time.perf_counter() - start_t}s")
 
 
 def run_vtf(filename, work_folder, scene, VTFCmd_Path):
@@ -70,17 +67,17 @@ def run_vtf(filename, work_folder, scene, VTFCmd_Path):
     if filename == "Normal.png":
         cmd = cmd + '-flag Normal '
     
-    print("Converting:", filename)
+    if scene.devmode: print("Converting:", filename)
     
     # Run the VTF command
-    subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    if scene.devmode:   subprocess.run(cmd)
+    else:               subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     
     if DeletePNGafterVTF:
         os.remove(file)
     
     vtf_file = os.path.join(work_folder, util.replace_file_extension(filename, ".vtf"))
     
-    if os.path.exists(vtf_file):
-        print("File:", filename, "Converted - OK")
-    else:
-        print("Convert Failed, VTF File Not found")
+    if scene.devmode:
+        if os.path.exists(vtf_file): print("File:", filename, "Converted - OK")
+        else: print("Convert Failed, VTF File Not found")

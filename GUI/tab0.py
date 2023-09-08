@@ -86,7 +86,7 @@ def draw_formats(layout, scene):
     row2.operator("object.export_auto", text="Export Mesh")
     row2.operator("object.make_qc", text="Write QC")
     row2.operator("object.compile_qc", text="Compile")
-    row2.operator("wm.open_file_modelscr", text="", icon='FILE')
+    row2.operator("wm.open_file_modelscr", text="", icon='FILE_FOLDER')
 
 
 

@@ -29,9 +29,9 @@ def export_box(self, context):
     
     funny3 = row1.row(align=True)
     funny3.scale_x = 0.65
-    funny3.operator("wm.open_file_tex", text="VTF", icon='FILE')
-    funny3.operator("wm.open_file_mdl", text="MDL", icon='FILE')
-    funny3.operator("wm.open_file_qc", text="QC", icon='FILE')
+    funny3.operator("wm.open_file_tex", text="VTF", icon='FILE_FOLDER')
+    funny3.operator("wm.open_file_mdl", text="MDL", icon='FILE_FOLDER')
+    funny3.operator("wm.open_file_qc", text="QC", icon='FILE_FOLDER')
     
     
     

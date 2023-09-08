@@ -12,20 +12,12 @@ def build(self, context):
     
     vmt_box(layout, scene)
     
-    #pbr_box(layout, scene)
-    
     light_box(layout, scene)
     
+    if scene.use_phong: phong_box(layout, scene)
     
-    if scene.use_phong:
-        phong_box(layout, scene)
+    if scene.use_env: env_box(layout, scene)
     
-    #detail_box(layout, scene)
-    
-    if scene.use_env:
-        env_box(layout, scene)
-    
-    #the last
     common.export_box(self, context)
 
 
@@ -38,16 +30,6 @@ def vmt_box(layout, scene):
     
     coll1 = box.column(align=True)
     coll1.prop(scene, "material_path", text="$basetexture")
-    #coll1.prop(scene, "model_target_location", text="Model Path")
-    
-    #box.prop(scene, "model_name", text="Model Name")
-    
-    
-    
-    
-    #coll2 = box.column(align=True)
-    #coll2.box().label(text= "Full Material Path: [ "+str(common.materials_local_path(scene))+" ]" )
-    #coll2.box().label(text= "Full Material Path: [ "+str(common.models_local_path(scene))+" ]" )
 
 
 def pbr_box(layout, scene):
@@ -246,7 +228,6 @@ def register():
     bpy.types.Scene.light_power = bpy.props.FloatProperty(default=1.0, description="light_power")
     
     
-    #bpy.types.Scene.phongexponent = bpy.props.FloatProperty(default=5.0, description="phongexponent")
     bpy.types.Scene.phongboost = bpy.props.FloatProperty(default=3.0, description="phongboost")
     bpy.types.Scene.phongfresnelranges = bpy.props.StringProperty(default='[3 5 10]', description="phongfresnelranges")
     bpy.types.Scene.phongalbedotint = bpy.props.BoolProperty(default=True)
@@ -277,10 +258,10 @@ def unregister():
     del bpy.types.Scene.normalmap_alpha_expo
     del bpy.types.Scene.light_mask_mode
     
+    
     del bpy.types.Scene.use_light
     del bpy.types.Scene.light_power
     
-    #del bpy.types.Scene.phongexponent
     del bpy.types.Scene.phongboost
     del bpy.types.Scene.phongfresnelranges
     del bpy.types.Scene.phongalbedotint

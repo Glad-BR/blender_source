@@ -1,4 +1,3 @@
-import logging as log
 import os
 import subprocess
 import threading
@@ -52,7 +51,6 @@ def export_mat():
     
     materials = get_materials()
     
-    
     print("")
     print("Materials To Export:")
     for material in materials: print(material.name)
@@ -72,24 +70,12 @@ def export_mat():
         else:
             process_material(scene, material, work_folder)
         
-        print("")
         print(f"[{index+1}/{len(materials)}] Material [{material.name}] done in {time_stop(calc_time)}s")
-        print("")
     
     if scene.multithreading:
         for thread in threads:
             thread.join()
 
-
-#///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-def run_studiomdl():
-    
-    cmd = f'"{ph.studiomdl()}" -game "{ph.source()}" -nop4 -verbose "compile.qc"'
-    
-    working_directory = os.path.join(ph.work_folder(), ph.path_compile_model())
-    
-    subprocess.run(cmd, shell=True, cwd=working_directory)
 
 #///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -108,6 +94,17 @@ def process_material(scene, material, work_folder):
             status[3] = False
             vmt.main(scene, status, material.name, (material.name+'_OFF'))
 
+#///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+def run_studiomdl():
+    
+    cmd = f'"{ph.studiomdl()}" -game "{ph.source()}" -nop4 -verbose "compile.qc"'
+    
+    working_directory = os.path.join(ph.work_folder(), ph.path_compile_model())
+    
+    subprocess.run(cmd, shell=True, cwd=working_directory)
+
+#///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 def get_materials():
     active_materials = []

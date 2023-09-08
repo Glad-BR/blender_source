@@ -16,8 +16,6 @@ def build():
 def write_qc():
     scene = bpy.context.scene
     
-    model_name = str(scene.model_name)
-    
     export_format = str.lower(scene.gbr_export_format)
     
     reference = "Reference"
@@ -96,7 +94,7 @@ def write_texturegroup(f):
     for mat in mats:
         if util.mat_has_light(mat):
             skin0 = skin0 + f'"{mat.name}" '
-            skin1 = skin1 + f'"{mat.name+suffix}" '
+            skin1 = skin1 + f'"{mat.name + suffix}" '
     
     skin0 = '{ '+skin0+'}'
     skin1 = '{ '+skin1+'}'
@@ -115,20 +113,23 @@ def write_texturegroup(f):
 
 
 def write_idle():
-    scene = bpy.context.scene
-    
-    
     qc_path = os.path.join( ph.work_folder(), ph.path_compile_model(), "anims")
     os.makedirs(qc_path, exist_ok=True)
     
+    File = [
+        'version 1',
+        'nodes',
+        '0 "Implicit" -1',
+        'end',
+        'skeleton',
+        'time 0',
+        '0  0.000000 0.000000 0.000000  0.000000 0.000000 0.000000',
+        'end',
+        'triangles',
+        'end'
+    ]
+    
     with open( str(os.path.join(qc_path, "idle.SMD")), 'w') as f:
-        f.write('version 1\n')
-        f.write('nodes\n')
-        f.write('0 "Implicit" -1\n')
-        f.write('end\n')
-        f.write('skeleton\n')
-        f.write('time 0\n')
-        f.write('0  0.000000 0.000000 0.000000  0.000000 0.000000 0.000000\n')
-        f.write('end\n')
-        f.write('triangles\n')
-        f.write('end\n')
+        for string in File:
+            f.write(f'{string}\n')
+
