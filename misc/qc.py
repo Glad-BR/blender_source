@@ -3,8 +3,7 @@ import os
 
 import bpy
 
-from .. import lod_num
-from ..GUI import common
+from ..GUI import common, ui_list
 from . import path as ph
 from . import util
 
@@ -73,7 +72,7 @@ def write_qc():
 
 def write_lod(f, scene, reference, export_format):
     if scene.make_lods:
-        for [lod, ang] in lod_num:
+        for [lod, ang] in ui_list.get_legacy_list():
             f.write(f'$lod {lod}\n')
             f.write('{\n')
             f.write(f'\treplacemodel "{reference}.{export_format}" "LOD_{lod}.{export_format}"\n')

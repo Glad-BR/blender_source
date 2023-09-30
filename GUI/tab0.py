@@ -2,10 +2,10 @@ import os
 
 import bpy
 
-from .. import lod_num
+from .. import save_file
 from ..misc import path as ph
 from ..misc import qc, smd, util
-from . import common, tab3
+from . import common, tab01, tab3
 
 
 def build(self, context):
@@ -17,7 +17,8 @@ def build(self, context):
     general_box(layout, scene)
     
     row1 = layout.box().row(align=True)
-    tab3.list_mats_box(row1, scene)
+    #tab3.list_mats_box(row1, scene)
+    tab01.draw(row1, self, context)
     draw_prop_config(row1, scene)
     
     box = layout.box()
@@ -35,43 +36,42 @@ def build(self, context):
 #///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 def general_box(layout, scene):
-    box = layout.box()
     
-    row = box.row(align=True)
+    box = layout.column(align=True)
+    
+    
+    row = box.box().row(align=True)
     row.label(text="Prop Path Info")
     row.scale_x = 0.2
     row.operator("object.add_model_to_mat_string", text="Sync MAT to MDL")
     
-    coll1 = box.column(align=True)
+    coll1 = box.box().column(align=True)
     coll1.prop(scene, "material_path", text="Materials/")
     coll1.prop(scene, "model_path", text="Models/")
     
     
-    coll2 = box.column(align=True)
+    coll2 = box.box().column(align=True)
     coll2.prop(scene, "model_name", text="Model Name")
     coll2.prop(scene, "surfaceprop", text="surfaceprop")
     
-    coll3 = box.column(align=True)
-    coll3.prop(scene, "use_name_in_material", text= "Use Name in Path | Full Material Path: [ "+str(ph.material())+" ]" )
-    coll3.prop(scene, "use_name_in_model", text= "Use Name in Path | Full Model Path:    [ "+str(ph.model())+" ]" )
+    coll3 = box.box().column(align=True)
+    coll3.prop(scene, "use_name_in_material", text= f"Use Name in Path | Full Material Path: [{str(ph.material())}]" )
+    coll3.prop(scene, "use_name_in_model", text= f"Use Name in Path | Full Model Path:    [{str(ph.model())}]" )
     
 
 #///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 def draw_prop_config(layout, scene):
     
-    box2 = layout.box().column()
+    box = layout.box().column()
     
-    #row1 = box2.row(align=True)
-    row1 = box2
+    box.prop(scene, "staticprop", text="staticprop")
     
-    row1.prop(scene, "staticprop", text="staticprop")
-    row1.prop(scene, "concave", text="concave")
+    box.prop(scene, "concave", text="concave")
+    box.prop(scene, "contents", text="contents")
     
-    row1.prop(scene, "contents", text="contents")
-    
-    row1.prop(scene, "mass", text="mass")
-    row1.prop(scene, "inertia", text="inertia")
+    box.prop(scene, "mass", text="mass")
+    box.prop(scene, "inertia", text="inertia")
 
 
 def draw_formats(layout, scene):
@@ -129,24 +129,23 @@ class dev_use_dmx(bpy.types.Operator):
 
 class export_auto(bpy.types.Operator):
     bl_idname = "object.export_auto"
-    bl_label = "Export Pys"
+    bl_label = "Export MDL"
     def execute(self, context):
-        global lod_num
-        smd.func_export_ref(lod_num, bpy.context.scene.ref_collection)
+        smd.func_export_ref(bpy.context.scene.ref_collection)
         smd.func_export_pys(bpy.context.scene.pys_collection)
         return {'FINISHED'}
 
 
 class compile_qc(bpy.types.Operator):
     bl_idname = "object.compile_qc"
-    bl_label = "Export Pys"
+    bl_label = "Compile QC"
     def execute(self, context):
         util.run_studiomdl()
         return {'FINISHED'}
 
 class make_qc(bpy.types.Operator):
     bl_idname = "object.make_qc"
-    bl_label = "Export Pys"
+    bl_label = "Make QC"
     def execute(self, context):
         qc.write_qc()
         qc.write_idle()
@@ -156,7 +155,7 @@ class make_qc(bpy.types.Operator):
 
 class add_model_to_mat_string(bpy.types.Operator):
     bl_idname = "object.add_model_to_mat_string"
-    bl_label = "Export Pys"
+    bl_label = "add_model_to_mat_string"
     def execute(self, context):
         scene = context.scene
         scene.material_path = os.path.normpath(os.path.join("models", scene.model_path))
@@ -164,15 +163,20 @@ class add_model_to_mat_string(bpy.types.Operator):
 
 #///////////////////////////////////////////////////////////////////////////////
 
+
+
+#///////////////////////////////////////////////////////////////////////////////
+
 class open_file_modelscr(bpy.types.Operator):
     bl_idname = "wm.open_file_modelscr"
     bl_label = "Open File Browser"
     def execute(self, context):
-        # Open the file browser to the specific path
         path = os.path.join(ph.work_folder(),ph.path_compile_model())
         os.makedirs(path, exist_ok=True)
         bpy.ops.wm.path_open(filepath=path)
         return {'FINISHED'}
+
+
 
 #///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -192,7 +196,7 @@ classes = [
     make_qc,
     add_model_to_mat_string,
     open_file_modelscr,
-    dev_dummy,
+    dev_dummy
 ]
 
 
@@ -229,12 +233,17 @@ def unregister():
         bpy.utils.unregister_class(cls)
 
     del bpy.types.Scene.gbr_export_format
+    
     del bpy.types.Scene.ref_collection
     del bpy.types.Scene.pys_collection
+    
     del bpy.types.Scene.make_lods
+    
     del bpy.types.Scene.make_smooth
     del bpy.types.Scene.pys_smooth
     
+    del bpy.types.Scene.use_name_in_model
+    del bpy.types.Scene.use_name_in_material
     
     del bpy.types.Scene.staticprop
     del bpy.types.Scene.contents

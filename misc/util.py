@@ -5,7 +5,6 @@ import time
 
 import bpy
 
-from .. import lod_num
 from . import path as ph
 from . import pbr, qc, smd, vmt, vtf
 
@@ -31,7 +30,7 @@ def replace_file_extension(file_name, new_extension):
 def export_mesh():
     
     scene = bpy.context.scene
-    smd.func_export_ref(lod_num, scene.ref_collection)
+    smd.func_export_ref(scene.ref_collection)
     
     scene = bpy.context.scene
     smd.func_export_pys(scene.pys_collection)
@@ -44,6 +43,7 @@ def export_mesh():
 #///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 def export_mat():
+    calc_time = time_start()
     
     scene = bpy.context.scene
     
@@ -57,8 +57,9 @@ def export_mat():
     print("")
     
     for index, material in enumerate(materials):
-        
         calc_time = time_start()
+        
+        print(f"[{index+1}/{len(materials)}] Exporting Material: {material.name}")
         
         work_folder = os.path.join( ph.work_folder(), ph.path_material(), material.name)
         os.makedirs(work_folder, exist_ok=True)
@@ -75,6 +76,8 @@ def export_mat():
     if scene.multithreading:
         for thread in threads:
             thread.join()
+    
+    print(f"All Materials Done, total: {len(materials)} in: {time_stop(calc_time)}s")
 
 
 #///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -175,6 +178,7 @@ def decode_nodes_fallback(material):
                 status_backup[0] = True
     
     # Do the same for the Normal and Emission nodes (if available)
+    
     normal_input = bsdf_shader.inputs.get('Normal')
     if normal_input and normal_input.is_linked:
         linked_node = normal_input.links[0].from_node
@@ -193,7 +197,7 @@ def decode_nodes_fallback(material):
         nodes.get('Color'),
         None,
         nodes.get('Normal'),
-        nodes.get('Light')
+        nodes.get('Emission')
     )
     
     return nodes_return_backup, status_backup

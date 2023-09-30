@@ -3,22 +3,41 @@ import os
 
 import bpy
 
-from ..GUI import common
+from ..GUI import common, ui_list
 from . import path as ph
 
+#///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-def remove_decimate_modifier(obj):
+def rem_decimate(obj):
     modifier = obj.modifiers.get("Decimate")
     if modifier:
         obj.modifiers.remove(modifier)
 
-def add_decimate_modifier(obj, angle_limit_degrees):
+#Method 1
+def add_decimate_edge_collapse(obj, in_data):
+    rem_decimate(obj)
     
-    remove_decimate_modifier(obj)
+    modifier = obj.modifiers.new(name="Decimate", type='DECIMATE')
+    modifier.decimate_type = 'COLLAPSE'
+    modifier.ratio = (in_data / 100)
+
+#Method 2
+def add_decimate_unsubdivide(obj, in_data):
+    rem_decimate(obj)
+    
+    modifier = obj.modifiers.new(name="Decimate", type='DECIMATE')
+    modifier.decimate_type = 'UNSUBDIV'
+    modifier.iterations = in_data
+
+#Method 3
+def add_decimate_planar(obj, in_data):
+    rem_decimate(obj)
     
     modifier = obj.modifiers.new(name="Decimate", type='DECIMATE')
     modifier.decimate_type = 'DISSOLVE'
-    modifier.angle_limit = angle_limit_degrees * (3.14159 / 180.0)  # Convert degrees to radians
+    modifier.angle_limit = in_data * (3.14159 / 180.0)  # Convert degrees to radians
+
+#///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 def decode_coll(collection):
     if collection and collection.objects:
@@ -35,27 +54,43 @@ def make_smooth_coll(collection):
         make_smooth_obj(obj)
 
 
-def make_lod(collection, lod_levels):
+def make_lod(collection):
     
     original_name = collection.name
     
-    for [lod_level, angle] in lod_levels:
-        objects = decode_coll(collection)
+    dev_lod_list = ui_list.listUnpack()
+    
+    for [name, lod, arg, mode] in dev_lod_list:
+        if mode == 1:
+            print(f"Lod: {str(lod)} Using Collapse With Ratio: {str(arg)}")
+        if mode == 2:
+            print(f"Lod: {str(lod)} Using Un-Subdivide With {str(arg)} Iterations")
+        if mode == 3:
+            print(f"Lod: {str(lod)} Using Planar With Angle: {str(arg)}")
+    
+    
+    for [name, lod, arg, mode] in dev_lod_list:
         
         make_smooth_coll(collection)
         
-        for obj in objects:
-            print( obj.name+" With Lod: "+str(angle)+"Using Angle: "+str(angle) )
+        for obj in decode_coll(collection):
             
-            add_decimate_modifier(obj, lod_level)
+            if mode == 1:
+                add_decimate_edge_collapse(obj, arg)
+            
+            if mode == 2:
+                add_decimate_unsubdivide(obj, arg)
+            
+            if mode == 3:
+                add_decimate_planar(obj, arg)
         
-        new_name = "LOD_"+str(lod_level)
+        new_name = f"LOD_{str(lod)}"
         
         collection.name = new_name
         bpy.ops.export_scene.smd(collection=new_name, export_scene=False)
     
     for obj in decode_coll(collection):
-        remove_decimate_modifier(obj)
+        rem_decimate(obj)
     
     collection.name = original_name
 
@@ -71,7 +106,8 @@ def export(collection, name):
 
 #Utils /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-def func_export_ref(lod_num, collection):
+def func_export_ref(collection):
+    
     scene = bpy.context.scene
     
     path = os.path.join(ph.work_folder(), ph.path_compile_model())
@@ -89,7 +125,7 @@ def func_export_ref(lod_num, collection):
             make_smooth_coll(collection)
         
         if scene.make_lods:
-            make_lod(collection, lod_num)
+            make_lod(collection)
         
         export(collection, "Reference")
     

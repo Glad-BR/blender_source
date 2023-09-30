@@ -22,16 +22,17 @@ def convert_to_pil(input_data):
 def load_img(node):
     devmode = bpy.context.scene.devmode
     
-    path = os.path.abspath(bpy.path.abspath(node.image.filepath))
-    if devmode:
-        print(f"Loading IMG: {os.path.basename(path)}")
+    try:
+        path = os.path.abspath(bpy.path.abspath(node.image.filepath))
+    except AttributeError:
+        return None
+    
+    if devmode: print(f"Loading IMG: {os.path.basename(path)}")
     
     try:
         return Image.open(path)
     except FileNotFoundError:
-        if devmode:
-            print("Original File Not Found, Converting Existing Loaded IMG")
-            print(f"Converting To Pil: {os.path.basename(path)}")
+        if devmode: print(f"Original File Not Found, Converting Existing Loaded IMG: {os.path.basename(path)}")
         return convert_to_pil(node)
 
 
@@ -62,8 +63,19 @@ def decode_pbr(pbr):
 def exponent(image, exponent):
     return Image.eval(image, lambda x: int(pow(x / 255.0, exponent) * 255))
 
+def blend_images(image1, image2, opacity_percent):
+    alpha = opacity_percent / 100.0
+    image1 = image1.convert("RGBA")
+    image2 = image2.convert("RGBA")
+    image2_copy = Image.new("RGBA", image2.size, (255, 255, 255, int(255 * alpha)))
+    image2_copy.paste(image2, (0, 0), image2_copy)
+    result_image = Image.blend(image1, image2_copy, alpha)
+    return ImageChops.multiply(result_image.convert("RGB"), image1.convert("RGB")).convert("RGB")
+
+
+#///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 def pbr_magic(input_images):
-    #Ts = util.time_start()
     
     scene = bpy.context.scene
     image_color_input, image_normal_input, image_pbr = input_images
@@ -83,11 +95,13 @@ def pbr_magic(input_images):
     
     if scene.use_metallic:
         if scene.devmode: print("Using Metallic Map in Color")
+        
         spec2 = ImageChops.multiply(glossy_map, metallic_map)
         specular = ImageChops.multiply(image_color, spec2.convert('RGB'))
     else:
         if scene.devmode: print("Ignoring Metallic in Color")
-        specular = ImageChops.multiply(image_color, glossy_map.convert('RGB'))
+        
+        specular = blend_images(image_color, glossy_map.convert('RGB'), int(scene.glossy_oppacity))
     
     
     if scene.use_ao:
@@ -135,7 +149,7 @@ def main(scene, nodes, status, material):
             output_img.save(os.path.join(work_folder, img_name))
     
     
-    if has_light:
+    if has_light and has_color:
         light_out = light.resize(color.size).convert("RGB")
         
         if has_pbr and scene.light_mask_mode:

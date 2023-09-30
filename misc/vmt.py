@@ -34,10 +34,11 @@ def main(scene, status, mat_name, vmt_name):
     with open( os.path.join( ph.full_material() , vmt_name+".vmt" ) , 'w') as f:
         f.write('"VertexLitGeneric"\n')
         f.write('{\n')
-        f.write(f'\t"$basetexture"          "{base_texture}/Specular"   \n')
+        if Has_color:
+            f.write(f'\t"$basetexture"      "{os.path.join(base_texture,"Specular")}"\n')
         if Has_normal:
-            f.write(f'\t"$bumpmap"          "{base_texture}/Normal"     \n')
-        f.write(f'\t"$surfaceprop"          "{surface_prop}"            \n')
+            f.write(f'\t"$bumpmap"          "{os.path.join(base_texture,"Normal")}"\n')
+        f.write(f'\t"$surfaceprop"          "{surface_prop}"\n')
         f.write(f'\t \n')
         
         if scene.use_phong and Has_pbr:
@@ -46,8 +47,8 @@ def main(scene, status, mat_name, vmt_name):
             f.write(f'\t"$phongboost"           "{scene.phongboost}"\n')
             f.write(f'\t"$phongfresnelranges"   "{scene.phongfresnelranges}"\n')
             f.write(f'\t"$phongalbedotint" 	    "{phongalbedotint}"\n')
-            f.write(f'\t"$phongalbedoboost" 	    "{phongalbedoboost}"\n')
-            f.write(f'\t"$phongexponenttexture" "{base_texture}/Phong"\n')
+            f.write(f'\t"$phongalbedoboost" 	"{phongalbedoboost}"\n')
+            f.write(f'\t"$phongexponenttexture" "{os.path.join(base_texture,"Phong")}"\n')
             f.write(f'\t \n')
         
         #if Detail:
@@ -68,7 +69,7 @@ def main(scene, status, mat_name, vmt_name):
         
         if Has_Light:
             f.write(f'\t"$emissiveblendenabled"		    "1"\n')
-            f.write(f'\t"$emissiveBlendBaseTexture"     "{base_texture}/Light"\n')
+            f.write(f'\t"$emissiveBlendBaseTexture"     "{os.path.join(base_texture,"Light")}"\n')
             f.write(f'\t"$EmissiveBlendFlowTexture"     "vgui/white"\n')
             f.write(f'\t"$EmissiveBlendTexture"         "vgui/white"\n')
             f.write(f'\t"$emissiveblendstrength"	    "{emissiveblendstrength}"\n')

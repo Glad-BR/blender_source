@@ -54,6 +54,12 @@ def studio_ok():
 def hlmv_ok():
     return os.path.exists(ph.hlmv())
 
+def lod_mode_string():
+    scene = bpy.context.scene
+    if scene.lod_mode == 1: return "Collapse"
+    if scene.lod_mode == 2: return "Un-Subdivide"
+    if scene.lod_mode == 3: return "Planar"
+
 #///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 class Export_Texture(bpy.types.Operator):
@@ -112,8 +118,8 @@ class open_file_tex(bpy.types.Operator):
     bl_label = "Open File Browser"
     def execute(self, context):
         path = os.path.join(ph.work_folder(),ph.path_material())
-        os.makedirs(path, exist_ok=True)
-        bpy.ops.wm.path_open(filepath=path)
+        if os.path.exists(path): bpy.ops.wm.path_open(filepath=path)
+        else: self.report({'INFO'}, "VTF Folder Not Found")
         return {'FINISHED'}
 
 class open_file_mdl(bpy.types.Operator):
@@ -121,8 +127,8 @@ class open_file_mdl(bpy.types.Operator):
     bl_label = "Open File Browser"
     def execute(self, context):
         path = os.path.join(ph.work_folder(),ph.path_model())
-        os.makedirs(path, exist_ok=True)
-        bpy.ops.wm.path_open(filepath=path)
+        if os.path.exists(path): bpy.ops.wm.path_open(filepath=path)
+        else: self.report({'INFO'}, "MDL Folder Not Found")
         return {'FINISHED'}
 
 class open_file_qc(bpy.types.Operator):
@@ -130,8 +136,8 @@ class open_file_qc(bpy.types.Operator):
     bl_label = "Open File Browser"
     def execute(self, context):
         path = os.path.join(ph.work_folder(),ph.path_compile_model())
-        os.makedirs(path, exist_ok=True)
-        bpy.ops.wm.path_open(filepath=path)
+        if os.path.exists(path): bpy.ops.wm.path_open(filepath=path)
+        else: self.report({'INFO'}, "QC Folder Not Found")
         return {'FINISHED'}
 
 #///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -184,6 +190,7 @@ def register():
     bpy.types.Scene.del_modelsrc = bpy.props.BoolProperty(default=False)
     
     
+    bpy.types.Scene.lod_mode = bpy.props.IntProperty(default=1, max=3, min=1)
 
 #///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -206,6 +213,8 @@ def unregister():
     del bpy.types.Scene.convert_vtf
     del bpy.types.Scene.make_vmt
     
+    del bpy.types.Scene.make_skin_groups
+    
     del bpy.types.Scene.del_modelsrc
     
-    del bpy.types.Scene.make_skin_groups
+    del bpy.types.Scene.lod_mode

@@ -79,5 +79,5 @@ def run_vtf(filename, work_folder, scene, VTFCmd_Path):
     vtf_file = os.path.join(work_folder, util.replace_file_extension(filename, ".vtf"))
     
     if scene.devmode:
-        if os.path.exists(vtf_file): print("File:", filename, "Converted - OK")
+        if os.path.exists(vtf_file): print(f"File: {filename} Converted - OK")
         else: print("Convert Failed, VTF File Not found")

@@ -122,3 +122,6 @@ def unregister():
     del bpy.types.Scene.multithreading
     del bpy.types.Scene.vtf_multithreading
     del bpy.types.Scene.pil_multithreading
+    
+    del bpy.types.Scene.pannel_current_tab
+    del bpy.types.Scene.devmode

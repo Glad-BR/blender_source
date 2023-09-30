@@ -33,26 +33,40 @@ def vmt_box(layout, scene):
 
 
 def pbr_box(layout, scene):
+
+    coll = layout.column(align=True)
     
-    box3 = layout.box()
+    box1 = coll.box()
     
-    row1 = box3.row(align=True)
+    row1 = box1.row(align=True)
     row1.label(text="Fake PBR Options")
     row1.operator("object.pbr_reset", text="", icon='FILE_REFRESH')
     
-    row2 = box3.row(align=True)
-    coll1 = row2.column(align=True)
-    coll2 = row2.column(align=True)
-    coll3 = row2.column(align=True)
+    #/
     
-    coll1.prop(scene, "use_ao", text="Bake AO in Specular")
-    coll1.prop(scene, "normalmap_alpha_expo", text="Roughness Exponent")
+    box2 = coll
     
-    coll2.prop(scene, "use_metallic", text="Use Metallic in Specular")
-    coll2.prop(scene, "invert_metallic", text="Invert Metallic Map")
+    row2 = box2.row(align=True)
+    boxy1 = row2.box()
+    boxy2 = row2.box()
+    boxy3 = row2.box()
+    boxy4 = row2.box()
     
-    box5 = coll3.box()
-    box5.prop(scene, "light_mask_mode", text="Use Emissive as SelfIlium mask")
+    boxy1.prop(scene, "use_ao", text="Bake AO in Specular")
+    boxy1.prop(scene, "ao_oppacity", text="Ao Oppacity")
+    
+    
+    boxy2.prop(scene, "normalmap_alpha_expo", text="Roughness Exponent")
+    boxy2.prop(scene, "glossy_oppacity", text="Roughness Oppacity")
+    
+    
+    
+    boxy3.prop(scene, "use_metallic", text="Use Metallic in Specular")
+    boxy3.prop(scene, "invert_metallic", text="Invert Metallic Map")
+    
+    boxy4.prop(scene, "light_mask_mode", text="Use Emissive as SelfIlium mask")
+    
+    
     
     box4 = layout.box()
     row8 = box4.row(align=True)
@@ -224,18 +238,22 @@ def register():
     bpy.types.Scene.light_mask_mode = bpy.props.BoolProperty(default=False)
     
     
+    bpy.types.Scene.glossy_oppacity = bpy.props.IntProperty(default=80, min=0, max=100)
+    bpy.types.Scene.ao_oppacity = bpy.props.IntProperty(default=80, min=0, max=100)
+    
+    
     bpy.types.Scene.use_light = bpy.props.BoolProperty(default=True)
-    bpy.types.Scene.light_power = bpy.props.FloatProperty(default=1.0, description="light_power")
+    bpy.types.Scene.light_power = bpy.props.FloatProperty(default=1.0, min=0)
     
     
-    bpy.types.Scene.phongboost = bpy.props.FloatProperty(default=3.0, description="phongboost")
+    bpy.types.Scene.phongboost = bpy.props.FloatProperty(default=3.0, min=0)
     bpy.types.Scene.phongfresnelranges = bpy.props.StringProperty(default='[3 5 10]', description="phongfresnelranges")
     bpy.types.Scene.phongalbedotint = bpy.props.BoolProperty(default=True)
-    bpy.types.Scene.phongalbedoboost = bpy.props.FloatProperty(default=2.0, description="phongalbedoboost")
+    bpy.types.Scene.phongalbedoboost = bpy.props.FloatProperty(default=2.0, min=0)
     
     
-    bpy.types.Scene.detailblendfactor = bpy.props.FloatProperty(default=0.2, description="detailblendfactor")
-    bpy.types.Scene.detailblendmode = bpy.props.FloatProperty(default=1.0, description="detailblendmode")
+    bpy.types.Scene.detailblendfactor = bpy.props.FloatProperty(default=0.2, min=0)
+    bpy.types.Scene.detailblendmode = bpy.props.FloatProperty(default=1.0, min=0)
     
     
     bpy.types.Scene.envmaplightscale = bpy.props.FloatProperty(default=1.0, description="envmaplightscale")
@@ -258,6 +276,8 @@ def unregister():
     del bpy.types.Scene.normalmap_alpha_expo
     del bpy.types.Scene.light_mask_mode
     
+    del bpy.types.Scene.glossy_oppacity
+    del bpy.types.Scene.ao_oppacity
     
     del bpy.types.Scene.use_light
     del bpy.types.Scene.light_power
